@@ -1,0 +1,15 @@
+#carouselExampleControls
+{
+    background-color: rgb(24, 24, 24);
+}
+.img
+{
+    opacity: 0.6;
+    height: 250px; /* Ajusta esta altura según lo que necesites */
+    object-fit: cover; /* Esto asegurará que las imágenes se ajusten sin deformarse */
+}
+
+#contenedor
+{
+    margin: 25px;
+}

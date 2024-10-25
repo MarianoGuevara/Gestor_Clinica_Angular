@@ -1,0 +1,28 @@
+.header
+{
+    background-color: rgb(17, 21, 107) !important;
+}
+
+.option
+{
+    color: rgb(255, 255, 255) !important;
+}
+.option:hover
+{
+    cursor: pointer;
+    color: rgb(205, 205, 205) !important;
+}
+
+
+.btnSesion
+{
+    background-color: transparent !important;
+    color: rgb(0, 255, 157) !important;
+    border: solid rgb(0, 255, 157) 1px;
+}
+.btnSesion:hover 
+{
+    color: rgb(17, 21, 107) !important;
+    background-color:  rgb(28, 193, 130) !important;
+}
+

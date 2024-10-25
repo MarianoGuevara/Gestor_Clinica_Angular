@@ -1,0 +1,70 @@
+<main class="form-signin w-100 m-auto container">
+    <form [formGroup]="formGroupMio" (ngSubmit)="loguearse()">
+      <img class="mb-4 d-block mx-auto" src="assets/logo.png" alt="" width="70" height="auto" />
+      <h1 class="h3 mb-3 fw-normal text-center">Inicia sesión</h1>
+  
+      <div class="form-floating">
+        <input formControlName="correo"  name="email" type="email" class="form-control" id="floatingInput" placeholder="name@example.com" />
+        <label for="floatingInput">Correo electrónico</label>
+      </div>
+      @if (formGroupMio.controls["correo"].errors !== null && formGroupMio.controls["correo"].touched)
+      {
+          @if (formGroupMio.controls["correo"].errors!['required'])
+          {
+              <p style="color: rgb(255, 95, 95);">El correo es obligatorio</p>
+          }
+          @else if (formGroupMio.controls["correo"].errors!['minlength'])
+          {
+              <p style="color: rgb(255, 95, 95);">Cantidad de caracteres inválida (mínimo {{formGroupMio.controls["correo"].errors!['minlength'].requiredLength}})</p>
+          }
+          @else if (formGroupMio.controls["correo"].errors!['maxlength'])
+          {
+              <p style="color: rgb(255, 95, 95);">Cantidad de caracteres inválida (máximo {{formGroupMio.controls["correo"].errors!['maxlength'].requiredLength}})</p>
+          }
+          @else if (formGroupMio.controls["correo"].errors!['email'])
+          {
+              <p style="color: rgb(255, 95, 95);">El correo no es válido</p>
+          }
+      }
+      
+      
+      <div class="form-floating">
+        <input formControlName="clave"  name="password" type="password" class="form-control" id="floatingPassword" placeholder="Password" />
+        <label for="floatingPassword">Contraseña</label>
+
+        @if (formGroupMio.controls["clave"].errors !== null && formGroupMio.controls["clave"].touched)
+        {
+            @if (formGroupMio.controls["clave"].errors!['required'])
+            {
+                <p style="color: rgb(255, 95, 95);">La clave es obligatoria</p>
+            }
+            @else if (formGroupMio.controls["clave"].errors!['minlength'])
+            {
+                <p style="color: rgb(255, 95, 95);">Cantidad de caracteres inválida (mínimo {{formGroupMio.controls["clave"].errors!['minlength'].requiredLength}})</p>
+            }
+            @else if (formGroupMio.controls["clave"].errors!['maxlength'])
+            {
+                <p style="color: rgb(255, 95, 95);">Cantidad de caracteres inválida (máximo {{formGroupMio.controls["clave"].errors!['maxlength'].requiredLength}})</p>
+            }
+            @else if (formGroupMio.controls["clave"].errors!['espacios'])
+            {
+                <p style="color: rgb(255, 95, 95);">La clave no puede tener espacios</p>
+            }
+        }
+
+      </div>
+
+
+      <button appBtn [disabled]="!formGroupMio.valid" class="btn w-100 py-2" type="submit">Ingresar</button>
+      <a routerLink="/registro" class="link-primary" style="margin-top: 15px; display: block">¿Aún no tienes cuenta? ¡Regístrate aquí!</a>
+
+      <div class="quick-access text-center" style="margin-top: 35px;">
+        <h5 class=" mb-3">Usuarios de acceso rápido</h5>
+        <div class="btn-group" role="group" aria-label="Quick access users">
+          <button (click)="LlenarUsers('','')" class="btn btn-outline-secondary" type="button">Usuario1</button>
+          <button (click)="LlenarUsers('2@gmail.com','222222')" class="btn btn-outline-secondary" type="button">Usuario2</button>
+          <button (click)="LlenarUsers('3@gmail.com','333333')" class="btn btn-outline-secondary" type="button">Usuario3</button>
+        </div>
+      </div>
+    </form>
+  </main>
