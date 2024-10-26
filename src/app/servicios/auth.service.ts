@@ -8,7 +8,7 @@ import {
 } from '@angular/fire/auth';
 import { Unsubscribe } from '@angular/fire/auth';
 import { Router } from '@angular/router';
-import { Usuario } from '../clases/usuario';
+import { IUsuario } from '../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ import { Usuario } from '../clases/usuario';
 export class AuthService {
     logueado: boolean = false;
     usuarioActual: User | null = null;
-  
+    
     auth = inject(Auth);
     router = inject (Router)
     authSubscription?: Unsubscribe;
@@ -50,12 +50,12 @@ export class AuthService {
         });
     }
     
-    async registarUsuario(user: Usuario) {
+    async registarUsuario(user: IUsuario) {
         const usuario = await createUserWithEmailAndPassword(this.auth, user.mail, user.password);
         return usuario;
     }
     
-    async loguearse(user: Usuario) {
+    async loguearse(user: IUsuario) {
         const usuario = await signInWithEmailAndPassword(this.auth, user.mail, user.password);
         return usuario;
     }

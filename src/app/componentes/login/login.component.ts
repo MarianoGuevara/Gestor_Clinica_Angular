@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../servicios/auth.service';
 import { AlertService } from '../../servicios/alert.service';
-import { Usuario } from '../../clases/usuario';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { LoadingService } from '../../servicios/loading.service';
 import { BtnDirective } from '../../directivas/btn.directive';
+import { IUsuario } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-login',
@@ -39,8 +39,19 @@ export class LoginComponent {
         try
         {
             console.log(this.formGroupMio);
-            const usuario = new Usuario("", "",-1, -1, this.formGroupMio.get('correo')?.value, this.formGroupMio.get('clave')?.value, "", "", false);
-    
+            const usuario: IUsuario = {
+                nombre: "",
+                apellido: "",
+                edad: -1,
+                dni: -1,
+                mail: this.formGroupMio.get('correo')?.value || "",
+                password: this.formGroupMio.get('clave')?.value || "",
+                imagenPerfil: "",
+                rol: "",
+                verificado: false,
+                id: ""
+            };
+            
             this.auth.loguearse(usuario)
             .then((retorno) => {
                 console.log(retorno);

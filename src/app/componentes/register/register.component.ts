@@ -1,12 +1,16 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../../servicios/auth.service';
 import { AlertService } from '../../servicios/alert.service';
-import { Usuario } from '../../clases/usuario';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Router } from '@angular/router';
 import { LoadingService } from '../../servicios/loading.service';
 import { BtnDirective } from '../../directivas/btn.directive';
+import { PacientesService } from '../../servicios/pacientes.service';
+import { EspecialistasService } from '../../servicios/especialistas.service';
+import { IEspecialista, IPaciente } from '../../interfaces/interfaces'; 
+import { IAdministrador } from '../../interfaces/interfaces';
+import { IUsuario } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-register',
@@ -30,6 +34,10 @@ export class RegisterComponent {
     formEspecialista : FormGroup;
     rol:string = "";
     arrayEspecialidades: string[] = [];
+    img1: Blob | null = null;
+    img2: Blob | null = null;
+    pacientesService = inject(PacientesService)
+    especialistasService = inject(EspecialistasService)
 
     constructor(){
         this.formGroupMio = this.fb.group({ 
@@ -106,7 +114,116 @@ export class RegisterComponent {
 
     registrarse()
     {
+        this.loading.mostrarSpinner();
 
+        const user: IUsuario = {
+            nombre: this.formGroupMio.get("nombre")?.value,
+            apellido: this.formGroupMio.get("apellido")?.value,
+            edad: this.formGroupMio.get("edad")?.value,
+            dni: this.formGroupMio.get("dni")?.value,
+            mail: this.formGroupMio.get("correo")?.value,
+            password: this.formGroupMio.get("clave")?.value,
+            imagenPerfil: this.formGroupMio.get("imagen")?.value,
+            rol: "", // o el valor que quieras definir
+            verificado: false,
+            id: ""
+        };
+
+
+        this.auth.registarUsuario(user)
+        .then(() => {
+            this.loading.mostrarSpinner();
+
+            if (this.rol == "paciente")
+            {
+                const paciente: IPaciente = {
+                    nombre: user.nombre,
+                    apellido: user.apellido,
+                    edad: user.edad,
+                    dni: user.dni,
+                    mail: user.mail,
+                    password: user.password,
+                    imagenPerfil: user.imagenPerfil,
+                    rol: "paciente",
+                    verificado: false,
+                    id: "",
+                    obraSocial: this.formPaciente.get("obraSocial")?.value,
+                    imagenPerfil2: this.formPaciente.get("imagen2")?.value
+                };
+                
+                const name1 = paciente.nombre + "-" + paciente.mail + "-" +"foto1";
+                const name2 = paciente.nombre + "-" + paciente.mail + "-" +"foto2";
+                this.pacientesService.Alta(paciente, this.img1!, name1, this.img2!, name2)
+                .then((id) => {
+                    this.auth.logueado = true;
+
+                    if (id != "-1")
+                    {
+                        paciente.id = id;
+                        this.loading.ocultarSpinner();
+                        this.alert.Alerta("Paciente Registrado", "Bienvenido a la app, " + user.mail, 'success', this.auth.logueado, "/home");
+                    }
+                    else
+                    {
+                        this.alert.Alerta("Fracaso", "Algo falló en el alta del paciente", 'error');
+                    }
+                })
+                .catch((error) => {
+                    this.alert.Alerta("Fracaso", error.message, 'error');
+                })
+                .finally(() => {
+                    this.loading.ocultarSpinner();
+                });
+            }
+            else
+            {
+                const especialista: IEspecialista = {
+                    nombre: user.nombre,
+                    apellido: user.apellido,
+                    edad: user.edad,
+                    dni: user.dni,
+                    mail: user.mail,
+                    password: user.password,
+                    imagenPerfil: user.imagenPerfil,
+                    rol: "paciente",
+                    verificado: false,
+                    id: "",
+                    especialidad: this.arrayEspecialidades
+                };
+                
+                const name1 = especialista.nombre + "-" + especialista.mail + "-" +"foto1";
+                this.especialistasService.Alta(especialista, this.img1!, name1)
+                .then((id) => {
+                    this.auth.logueado = true;
+
+                    if (id != "-1")
+                    {
+                        especialista.id = id;
+                        this.loading.ocultarSpinner();
+                        this.alert.Alerta("Especialista Registrado", "Bienvenido a la app, " + user.mail, 'success', this.auth.logueado, "/home");
+                    }
+                    else
+                    {
+                        this.alert.Alerta("Fracaso", "Algo falló en el alta del paciente", 'error');
+                    }
+                })
+                .catch((error) => {
+                    this.alert.Alerta("Fracaso", error.message, 'error');
+                })
+                .finally(() => {
+                    this.loading.ocultarSpinner();
+                });
+            }
+
+        })
+        .catch((error) => {
+            let msj = "";
+            if ((error as Error).message == 'Firebase: Error (auth/email-already-in-use).') msj = "El correo ingresado ya está en uso, pruebe con otro";
+            this.alert.Alerta("Fracaso", msj, 'error');
+        })
+        .finally(() => {
+            this.loading.ocultarSpinner();
+        });
     }
 
     LlenarUsers(mail:string, pass:string)
@@ -145,9 +262,7 @@ export class RegisterComponent {
         if (!this.especialidadExistente(selectedValue)){ this.arrayEspecialidades.push(selectedValue); }
         opc = null;
     }
-    // resetSelect() {
-    //     this.selectedValue = null; // O puedes usar un valor temporal que no esté en las opciones
-    // }
+
     especialidadExistente(str:string)
     {
         let encontrado = false;
@@ -163,4 +278,17 @@ export class RegisterComponent {
         console.log(encontrado);
         return encontrado;
     }
+
+    ///////////// BLOB /////////////////
+    changeImg($event:any, imgAtr:number)
+    {
+        const file = $event.target.files[0]
+        const img = new Blob([file], {type: file.type})
+        if (imgAtr == 1) {this.img1 = img;}
+        else if (imgAtr == 2){
+            this.img2 = img; 
+            console.log(this.formPaciente.get("imagen2")?.value);
+        }
+    }
+
 }

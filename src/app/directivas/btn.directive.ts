@@ -6,26 +6,40 @@ import { Directive, ElementRef, inject, HostListener, Input } from '@angular/cor
 })
 export class BtnDirective {
     elemento = inject(ElementRef);
-  
-    constructor() 
-    { 
-        this.colorDefault();
+    @Input() btn:string="normal";
+
+    ngOnInit(): void {
+        if (this.btn == "normal") {this.colorDefault();}
+        else {this.colorOutlined();}
     }
     // @Input() color:string = "";
 
     @HostListener('mouseenter') onMouseEnter() {
         this.elemento.nativeElement.style.cursor = "pointer"
-        this.elemento.nativeElement.style.backgroundColor = "rgb(28, 193, 130)";
+
+        if (this.btn == "normal") {this.elemento.nativeElement.style.backgroundColor = "violet";}
+        else {
+            this.elemento.nativeElement.style.border = "violet solid 2px";
+            this.elemento.nativeElement.style.color = "violet";
+        }
+        
     }
     @HostListener('mouseleave') onMouseLeave() {
         this.elemento.nativeElement.style.cursor = ""
-        this.colorDefault();
+
+        if (this.btn == "normal") {this.colorDefault();}
+        else {this.colorOutlined();}
     } 
 
     colorDefault()
     {
-        this.elemento.nativeElement.style.color = "rgb(17, 21, 107)";
-        this.elemento.nativeElement.style.backgroundColor  = "rgb(0, 255, 157)";
+        this.elemento.nativeElement.style.color = "rgb(58, 64, 70)";
+        this.elemento.nativeElement.style.backgroundColor  = "rgb(153, 65, 190)";
     }
-
+    colorOutlined()
+    {
+        this.elemento.nativeElement.style.backgroundColor = "transparent";
+        this.elemento.nativeElement.style.color = "rgb(153, 65, 190)";
+        this.elemento.nativeElement.style.border = "solid rgb(153, 65, 190) 2px"
+    }
 }

@@ -1,6 +1,6 @@
 <main class="form-signin w-100 m-auto container">
     <form [formGroup]="formGroupMio" (ngSubmit)="registrarse()">
-        <img class="mb-4 d-block mx-auto" src="assets/logo.png" alt="" width="70" height="auto" />
+        
         <h1 class="h3 mb-3 fw-normal text-center">Registrarse</h1>
         
         @if (rol == "paciente")
@@ -35,7 +35,7 @@
     
     
                 <div class="form-floating" style="margin-bottom: 10px;">
-                    <input formControlName="imagen" name="imagen" type="file" class="form-control" id="imagen" placeholder="name@example.com" />
+                    <input (change)="changeImg($event, 1)" formControlName="imagen" name="imagen" type="file" class="form-control" id="imagen" placeholder="name@example.com" />
                     <label for="floatingInput">Imagen de perfil</label>
                     @if (formGroupMio.controls["imagen"].touched && obtenerMensajeError("imagen", "mio") != null)
                     {
@@ -105,7 +105,7 @@
                         
                         
                         <div class="form-floating" style="margin-bottom: 10px;">
-                            <input formControlName="imagen2" name="imagen2" type="file" class="form-control" id="imagen2" placeholder="name@example.com" />
+                            <input (change)="changeImg($event, 2)" formControlName="imagen2" name="imagen2" type="file" class="form-control" id="imagen2" placeholder="name@example.com" />
                             <label for="floatingInput">Imagen de perfil nro 2</label>
                             @if (formPaciente.controls["imagen2"].touched && obtenerMensajeError("imagen2", "paciente") != null)
                             {
@@ -117,7 +117,7 @@
                 }
                 @else if (rol == "especialista") 
                 {
-                    <label for="especialidad">Especialidades</label>
+                    <label for="especialidad">Seleccionar especialidad</label>
 
                     <form [formGroup]="formEspecialista">
                         <div class="input-group mb-3">
@@ -146,11 +146,12 @@
 
             @if (rol == "especialista")
             {
+
                 <div class="contenedor4" style="max-height: 350px; overflow-y: auto;"> 
                     <ul>
                         @for (item of arrayEspecialidades; track $index) {
                             <li>
-                                <div style="display: flex; flex-direction: row; justify-content: space-around;">
+                                <div class="listContenedor">
                                     <p style="margin: 0 !important;">{{arrayEspecialidades[$index]}}</p>
                                     <p class="cruz" style="color: red;" (click)="borrarEspecialidad($index)">X</p>
                                 </div>
@@ -171,10 +172,9 @@
                 <button appBtn [disabled]="!formGroupMio.valid || !formEspecialista.valid" class="btn w-100 py-2" type="submit">Registrarse</button>
             }
             @else {
-                <p style="color: rgb(255, 95, 95);">El especialista debe tener al menos 1 especialidad...</p>
+                <!-- <p style="color: rgb(255, 95, 95);">El especialista debe tener al menos 1 especialidad...</p> -->
                 <button appBtn disabled class="btn w-100 py-2" type="submit">Registrarse</button>
             }
         }
-
     </form>
   </main>

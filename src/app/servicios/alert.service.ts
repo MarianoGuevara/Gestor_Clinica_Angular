@@ -37,8 +37,8 @@ export class AlertService {
             text: texto,
             icon: 'info',
             showCancelButton: true, // Habilita el botón de cancelar
-            confirmButtonColor: '#1cc182',
-            cancelButtonColor: '#11156b',
+            confirmButtonColor: '#3a4046',
+            cancelButtonColor: '#9941be',
             confirmButtonText: btn1,
             cancelButtonText: btn2
         }).then((result) => {
