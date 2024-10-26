@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { collection, Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { collection, Firestore, doc, setDoc, updateDoc, deleteDoc, collectionData, query, where, getDocs} from '@angular/fire/firestore';
 import { Storage, getDownloadURL, ref, uploadBytes } from '@angular/fire/storage';
 import { IEspecialista } from '../interfaces/interfaces';
 
@@ -29,4 +29,42 @@ export class EspecialistasService {
         catch {return "-1"}
     }
 
+    GetEspecialistas() 
+    {
+        let col = collection(this.firestore, 'especialistas');
+        const observable = collectionData(col);
+    
+        return observable;
+    }
+
+    async GetEspecialista(email:string)
+    {
+        const especialistaQuery = query(collection(this.firestore, 'especialistas'), where('mail', '==', email));
+        const especialistaDocs = await getDocs(especialistaQuery);
+        return especialistaDocs;
+    }
+
+    async actualizarEspecialista(especialista:IEspecialista)
+    {
+        try {        
+            const col = collection(this.firestore, 'especialistas');
+            const documento = doc(col, especialista.id);
+            console.log(documento);
+            await updateDoc(documento, {
+                nombre: especialista.nombre,
+                apellido: especialista.apellido,
+                edad: especialista.edad,
+                dni: especialista.dni,
+                mail: especialista.mail,
+                password: especialista.password,
+                imagenPerfil: especialista.imagenPerfil,
+                rol: especialista.rol,
+                verificado: especialista.verificado,
+                id: especialista.id,
+                especialidad: especialista.especialidad 
+            });
+            return true
+        }
+        catch {return false;}
+    }
 }

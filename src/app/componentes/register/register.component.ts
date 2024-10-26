@@ -65,6 +65,7 @@ export class RegisterComponent {
 
         this.alert.AlertaConDosBotones("Cual será su rol en el sistema?", "Usted se quiere registrar como paciente o especialista?", "Paciente", "Especialista")
         .then((retorno) => {
+            console.log(retorno);
             if (retorno) 
             {
                 this.rol = "paciente";
@@ -78,6 +79,7 @@ export class RegisterComponent {
             console.log((error as Error).message);
         })
         .finally(() => {
+            console.log(this.rol);
             this.loading.ocultarSpinner();
         });
     }
@@ -124,7 +126,7 @@ export class RegisterComponent {
             mail: this.formGroupMio.get("correo")?.value,
             password: this.formGroupMio.get("clave")?.value,
             imagenPerfil: this.formGroupMio.get("imagen")?.value,
-            rol: "", // o el valor que quieras definir
+            rol: "", 
             verificado: false,
             id: ""
         };
@@ -144,7 +146,7 @@ export class RegisterComponent {
                     mail: user.mail,
                     password: user.password,
                     imagenPerfil: user.imagenPerfil,
-                    rol: "paciente",
+                    rol: this.rol,
                     verificado: false,
                     id: "",
                     obraSocial: this.formPaciente.get("obraSocial")?.value,
@@ -185,7 +187,7 @@ export class RegisterComponent {
                     mail: user.mail,
                     password: user.password,
                     imagenPerfil: user.imagenPerfil,
-                    rol: "paciente",
+                    rol: this.rol,
                     verificado: false,
                     id: "",
                     especialidad: this.arrayEspecialidades
@@ -230,8 +232,7 @@ export class RegisterComponent {
     {
         this.formGroupMio.patchValue({
             correo: mail,
-            clave: pass
-            
+            clave: pass      
         });
     }
 

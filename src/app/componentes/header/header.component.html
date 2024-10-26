@@ -12,6 +12,10 @@
             }
             @else {
                 <li class="nav-link px-2 text-white option" routerLink="/home">Home</li>
+
+                @if (auth.usuarioRealActual != null && auth.determinarTipoUsuario() == "administrador"){
+                    <li class="nav-link px-2 text-white option" routerLink="/admin-usuarios">Seccion usuarios</li>
+                }
             }
 
           
@@ -23,7 +27,7 @@
               @if (auth.usuarioActual != null) 
               {
                   <p class="mb-0 me-3">{{auth.usuarioActual.email}}</p>
-                  
+                  <img src="{{auth.usuarioRealActual?.imagenPerfil}}" class="ftoPerfil">
               }
   
               <button type="button" class="btn btn-outline-light me-2" (click)="cerrarSesion()">Cerrar Sesión</button>

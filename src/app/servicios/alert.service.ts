@@ -18,14 +18,14 @@ export class AlertService {
             icon: icono, // 'success', 'error', 'warning', 'info', 'question'
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'Aceptar',
+            allowOutsideClick: false, 
+            allowEscapeKey: false 
         }).then((result) => {
             if (result.isConfirmed) {
-            // Lógica si el usuario confirma
-            if (navegar && ruta != "")
-            {
-                this.router.navigate([ruta]);
-            }
-            
+                if (navegar && ruta != "")
+                {
+                    this.router.navigate([ruta]);
+                }
             }
         });
     }
@@ -40,7 +40,9 @@ export class AlertService {
             confirmButtonColor: '#3a4046',
             cancelButtonColor: '#9941be',
             confirmButtonText: btn1,
-            cancelButtonText: btn2
+            cancelButtonText: btn2,
+            allowOutsideClick: false, 
+            allowEscapeKey: false 
         }).then((result) => {
             if (result.isConfirmed) {
                 return true;

@@ -1,0 +1,43 @@
+<div class="container">
+    <div class="card-container">
+        @for (item of arrayUsuarios; track $index) 
+        {
+            <div class="card">
+                <div class="card-header">
+                    <h3>{{ item.nombre }} {{ item.apellido }}</h3>
+                    <p><strong>Rol:</strong> {{ item.rol }}</p>
+                    @if (isEspecialista(item)){
+                        @if (item.verificado == false){
+                            <button appBtn class="btn" (click)="habilitarEspecialista(item)">Habilitar</button>
+                        }
+                        @else {
+                            <button appBtn btn="border" class="btn" (click)="deshabilitarEspecialista(item)">Deshabilitar</button>
+                        }
+                    }
+                </div>
+                <div class="card-body">
+                    <p><strong>Nombre</strong>: {{ item.nombre }}</p>
+                    <p><strong>Apellido</strong>: {{ item.apellido }}</p>
+                    <p><strong>Edad</strong>: {{ item.edad }}</p>
+                    <p><strong>Dni</strong>: {{ item.dni }}</p>
+                    <p><strong>Correo</strong>: {{ item.mail }}</p>
+                    <p><strong>Clave</strong>: {{ item.password }}</p>
+                    <img src="{{ item.imagenPerfil }}" alt="Imagen 1" class="user-image">
+                    @if (isPaciente(item)){
+                        <img src="{{ item.imagenPerfil2 }}" alt="Imagen 2" class="user-image">
+                        <p><strong>Obra social</strong>: {{ item.obraSocial }}</p>
+                    }
+                    @else if (isEspecialista(item)){
+                        <p><strong>Especialidades</strong>: {{ item.especialidad }}</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+
+    <div class="login-form">
+        <app-register-admin></app-register-admin>
+    </div>
+</div>
+

@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { LoadingService } from '../../servicios/loading.service';
 
 @Component({
   selector: 'app-home',
@@ -8,5 +9,8 @@ import { Component } from '@angular/core';
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-
+    loading = inject(LoadingService)
+    ngOnInit(): void {
+        this.loading.ocultarSpinner();
+    }
 }

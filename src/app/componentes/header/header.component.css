@@ -16,3 +16,12 @@
 .img:hover {
     cursor: pointer;
 }
+
+.ftoPerfil
+{
+    margin-right: 15px;
+    width: 40px;
+    height: auto;
+    border-radius: 50%; /* Esto hace que la imagen sea circular */
+    object-fit: cover; /* Para asegurar que la imagen se recorte y se mantenga en forma circular */
+}

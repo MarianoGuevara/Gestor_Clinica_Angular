@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { collection, Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { collection, Firestore, doc, setDoc, updateDoc, deleteDoc, collectionData, query, where, getDocs} from '@angular/fire/firestore';
 import { Storage, getDownloadURL, ref, uploadBytes } from '@angular/fire/storage';
 import { IPaciente } from '../interfaces/interfaces';
 
@@ -35,4 +35,18 @@ export class PacientesService {
         catch {return "-1"}
     }
 
+    GetPacientes() 
+    {
+        let col = collection(this.firestore, 'pacientes');
+        const observable = collectionData(col);
+    
+        return observable;
+    }
+
+    async GetPaciente(email:string)
+    {
+        const pacienteQuery = query(collection(this.firestore, 'pacientes'), where('mail', '==', email));
+        const especialistaDocs = await getDocs(pacienteQuery);
+        return especialistaDocs;
+    }
 }

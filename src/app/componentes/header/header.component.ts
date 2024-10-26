@@ -17,6 +17,7 @@ import { BtnDirective } from '../../directivas/btn.directive';
 export class HeaderComponent {
     auth = inject(AuthService);
 
+
     cerrarSesion() {
         this.auth.cerrarSesion();
     }
