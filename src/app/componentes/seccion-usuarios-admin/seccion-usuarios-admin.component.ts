@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, Inject, inject  } from '@angular/core';
 import { IEspecialista, IPaciente, IUsuario } from '../../interfaces/interfaces';
 import { EspecialistasService } from '../../servicios/especialistas.service';
 import { PacientesService } from '../../servicios/pacientes.service';
@@ -110,32 +110,38 @@ export class SeccionUsuariosAdminComponent {
 
     habilitarEspecialista(user:IUsuario)
     {
-        this.loading.mostrarSpinner()
+        this.loading.mostrarSpinner();
+        
         user.verificado = true;
         this.serviceEspecialistas.actualizarEspecialista(user as IEspecialista)
         .then((rta) => {
             if (rta){
-                this.alert.Alerta("HABILITADO", "El especialista fue habilitado correctamente", 'success');
+                this.alert.Alerta("HABILITADO", "El especialista fue habilitado correctamente", 'success').then(()=>{
+                    this.loading.ocultarSpinner();
+                });
             }
-            else {this.alert.Alerta("ERROR", "El especialista no pudo ser habilitado", 'error');}
-        })
-        .finally(() => {
-            this.loading.ocultarSpinner();
-        })
+            else {this.alert.Alerta("ERROR", "El especialista no pudo ser habilitado", 'error').then(()=>{
+                    this.loading.ocultarSpinner();
+                });
+            }
+        });
     }
     deshabilitarEspecialista(user:IUsuario)
     {
-        this.loading.mostrarSpinner()
+        this.loading.mostrarSpinner();
+        
         user.verificado = false;
         this.serviceEspecialistas.actualizarEspecialista(user as IEspecialista)
         .then((rta) => {
             if (rta){
-                this.alert.Alerta("DESHABILITADO", "El especialista fue deshabilitado correctamente", 'success');
+                this.alert.Alerta("DESHABILITADO", "El especialista fue deshabilitado correctamente", 'success').finally(()=>{
+                    this.loading.ocultarSpinner();
+                });
             }
-            else {this.alert.Alerta("ERROR", "El especialista no pudo ser deshabilitado", 'error');}
-        })
-        .finally(() => {
-            this.loading.ocultarSpinner();
+            else {this.alert.Alerta("ERROR", "El especialista no pudo ser deshabilitado", 'error').finally(()=>{
+                    this.loading.ocultarSpinner();
+                });
+            }
         })
     }
 }

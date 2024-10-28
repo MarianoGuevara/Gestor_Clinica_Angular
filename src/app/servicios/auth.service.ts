@@ -5,6 +5,7 @@ import {
   signOut,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  
 } from '@angular/fire/auth';
 import { Unsubscribe } from '@angular/fire/auth';
 import { Router } from '@angular/router';
@@ -16,6 +17,7 @@ import { IPaciente } from '../interfaces/interfaces';
 import { PacientesService } from './pacientes.service';
 import { AdminService } from './admin.service';
 import { LoadingService } from './loading.service';
+import { sendEmailVerification } from '@angular/fire/auth';
 
 @Injectable({
   providedIn: 'root'
@@ -82,9 +84,7 @@ export class AuthService {
     
 
     public determinarTipoUsuario(): string | null {
-        this.loading.mostrarSpinner();
         if (this.usuarioActual == null) {
-            this.loading.ocultarSpinner();
             return null; 
         }
         // console.log("LLAMADO A DETERMINAR");
@@ -100,7 +100,6 @@ export class AuthService {
             // console.log("admin");
             retorno = 'administrador';
         }
-        this.loading.ocultarSpinner();
         return retorno;
     }
 
@@ -109,22 +108,38 @@ export class AuthService {
         return this.usuarioActual;
     }
 
-    cerrarSesion(): void {
+    cerrarSesion(navegar:string): void {
         signOut(this.auth).then(() => {
           this.usuarioActual = null;
+          this.usuarioRealActual = null;
           this.logueado = false;
-          this.router.navigate(['/bienvenida']);
+          this.router.navigate([navegar]);
         });
     }
     
     async registarUsuario(user: IUsuario) {
-        const usuario = await createUserWithEmailAndPassword(this.auth, user.mail, user.password);
-        return usuario;
+        // const usuario = await createUserWithEmailAndPassword(this.auth, user.mail, user.password);
+        // return usuario;
+        try
+        {
+            const usuario = await createUserWithEmailAndPassword(this.auth, user.mail, user.password);
+
+            const usuarioFirebase = usuario.user;
+            await sendEmailVerification(usuarioFirebase);
+
+            return usuario;
+        }
+        catch (e){throw e;}
     }
     
     async loguearse(user: IUsuario) {
         const usuario = await signInWithEmailAndPassword(this.auth, user.mail, user.password);
         return usuario;
+    }
+
+    async verificarEmail() {
+        await this.usuarioActual!.reload();  // Recarga la información del usuario
+        return this.usuarioActual!.emailVerified;  // Retorna true si el email está verificado
     }
 
     ngOnDestroy(): void {

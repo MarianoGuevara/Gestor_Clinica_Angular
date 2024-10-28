@@ -39,7 +39,7 @@ export class RegisterAdminComponent {
             nombre: ["", [Validators.required, Validators.minLength(6), Validators.maxLength(30)]],
             apellido: ["", [Validators.required, Validators.minLength(6), Validators.maxLength(30)]],
             edad: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(18), Validators.max(150)]],
-            dni: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(45000000), Validators.max(99000000)]],
+            dni: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(10000000), Validators.max(99000000)]],
             imagen: ["", [Validators.required]],
         });
     }

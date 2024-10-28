@@ -46,7 +46,7 @@ export class RegisterComponent {
             nombre: ["", [Validators.required, Validators.minLength(6), Validators.maxLength(30)]],
             apellido: ["", [Validators.required, Validators.minLength(6), Validators.maxLength(30)]],
             edad: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(18), Validators.max(150)]],
-            dni: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(45000000), Validators.max(99000000)]],
+            dni: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(10000000), Validators.max(99000000)]],
             imagen: ["", [Validators.required]],
         });
 
@@ -147,7 +147,7 @@ export class RegisterComponent {
                     password: user.password,
                     imagenPerfil: user.imagenPerfil,
                     rol: this.rol,
-                    verificado: false,
+                    verificado: true,
                     id: "",
                     obraSocial: this.formPaciente.get("obraSocial")?.value,
                     imagenPerfil2: this.formPaciente.get("imagen2")?.value
@@ -155,15 +155,15 @@ export class RegisterComponent {
                 
                 const name1 = paciente.nombre + "-" + paciente.mail + "-" +"foto1";
                 const name2 = paciente.nombre + "-" + paciente.mail + "-" +"foto2";
-                this.pacientesService.Alta(paciente, this.img1!, name1, this.img2!, name2)
+                (this.pacientesService.Alta(paciente, this.img1!, name1, this.img2!, name2))
                 .then((id) => {
-                    this.auth.logueado = true;
-
                     if (id != "-1")
                     {
+                        console.log(id);
                         paciente.id = id;
                         this.loading.ocultarSpinner();
-                        this.alert.Alerta("Paciente Registrado", "Bienvenido a la app, " + user.mail, 'success', this.auth.logueado, "/home");
+                        this.alert.Alerta("Paciente Registrado, verificar correo", "Bienvenido a la app, " + user.mail, 'success');
+                        this.auth.cerrarSesion("login");
                     }
                     else
                     {
@@ -196,13 +196,13 @@ export class RegisterComponent {
                 const name1 = especialista.nombre + "-" + especialista.mail + "-" +"foto1";
                 this.especialistasService.Alta(especialista, this.img1!, name1)
                 .then((id) => {
-                    this.auth.logueado = true;
 
                     if (id != "-1")
                     {
                         especialista.id = id;
                         this.loading.ocultarSpinner();
-                        this.alert.Alerta("Especialista Registrado", "Bienvenido a la app, " + user.mail, 'success', this.auth.logueado, "/home");
+                        this.alert.Alerta("Especialista Registrado, verificar correo", "Bienvenido a la app, " + user.mail, 'success');
+                        this.auth.cerrarSesion("login");
                     }
                     else
                     {

@@ -17,8 +17,11 @@ import { BtnDirective } from '../../directivas/btn.directive';
 export class HeaderComponent {
     auth = inject(AuthService);
 
+    ngOnInit(): void {
+        if (this.auth.usuarioRealActual?.verificado == false) {this.auth.cerrarSesion("login")}
+    }
 
     cerrarSesion() {
-        this.auth.cerrarSesion();
+        this.auth.cerrarSesion("login");
     }
 }

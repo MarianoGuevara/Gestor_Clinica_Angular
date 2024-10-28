@@ -23,7 +23,7 @@ export class AdminService {
             const url = await getDownloadURL(storageRef); 
             administrador.imagenPerfil = url
 
-            setDoc(documento, administrador); 
+            await setDoc(documento, administrador); 
             return documento.id;
         }
         catch {return "-1"}

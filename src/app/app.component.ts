@@ -23,28 +23,26 @@ export class AppComponent {
     auth = inject(AuthService);
     private router = inject(Router);
 
-    ngOnInit(): void {
+    async ngOnInit(): Promise<void> {
         this.loading.mostrarSpinner();
-        this.auth.verificarSesion()
-        .then((user) => {
-            // console.log(this.auth.usuarioActual);
-            // console.log("RETORNO -> ", user)
-            
-            if (user != null)
-            {
-                this.router.navigate(["/home"])
+        try {
+            const user = await this.auth.verificarSesion(); 
+            const verificado = await this.auth.verificarEmail(); 
+    
+            if (user != null) {
+                if (verificado) {
+                    this.router.navigate(["/home"]);
+                } else {
+                    this.auth.cerrarSesion("/bienvenida");
+                }
+            } else {
+                this.router.navigate(["/bienvenida"]);
             }
-            else
-            {
-                this.router.navigate(["/bienvenida"])
-            }
-        })
-        .catch((error) => {
+        } catch (error) {
             console.error('Error al verificar sesión:', error);
-        })
-        .finally(()=>{
+        } finally {
             this.loading.ocultarSpinner();
-        });
+        }
     }
-
+    
 }

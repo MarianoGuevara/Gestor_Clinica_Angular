@@ -34,7 +34,7 @@ export class LoginComponent {
     }
 
 
-    loguearse() {
+    async loguearse() {
         this.loading.mostrarSpinner();
         try
         {
@@ -52,13 +52,38 @@ export class LoginComponent {
                 id: ""
             };
             
-            this.auth.loguearse(usuario)
-            .then((retorno) => {
+            await this.auth.loguearse(usuario)
+            .then(async (retorno) => {
+                await this.auth.verificarSesion();
                 console.log(retorno);
-                
-                this.auth.logueado = true;
-                this.auth.usuarioActual = retorno.user;
-                this.alert.Alerta("Exito", "Bienvenido, " + usuario?.mail, 'success', this.auth.logueado, "/home");
+
+                console.log("LOGIN");
+                console.log(this.auth.usuarioRealActual);
+
+                const verificado = await this.auth.verificarEmail();
+                if (this.auth.usuarioRealActual?.verificado)
+                {
+                    if (this.auth.usuarioRealActual.rol == "administrador" || verificado)
+                    {
+                        this.auth.logueado = true;
+                        this.auth.usuarioActual = retorno.user;
+                        this.alert.Alerta("Exito", "Bienvenido, " + usuario?.mail, 'success', this.auth.logueado, "/home");
+                    }
+                    else
+                    {
+                        this.alert.Alerta("Cuidado", "El usuario no habilitó la cuenta desde el correo", 'warning')
+                        .then(()=>{
+                            this.auth.cerrarSesion("bienvenida");
+                        })      
+                    }
+                }
+                else
+                {
+                    this.alert.Alerta("Cuidado", "El especialista no fue habilitado por un admin", 'warning')
+                    .then(()=>{
+                        this.auth.cerrarSesion("bienvenida");
+                    })                    
+                }
             })
             .catch((error) => {
                 console.log((error as Error).message);

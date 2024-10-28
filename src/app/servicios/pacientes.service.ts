@@ -13,7 +13,6 @@ export class PacientesService {
     constructor() { }
 
     async Alta(paciente:IPaciente, imagen:Blob, nombreImg:string, imagen2:Blob, nombreImg2:string) {
-
         try{
             const coleccion = collection(this.firestore, "pacientes") 
             const documento = doc(coleccion);
@@ -29,7 +28,7 @@ export class PacientesService {
             const url2 = await getDownloadURL(storageRef2); 
             paciente.imagenPerfil2 = url2
 
-            setDoc(documento, paciente); 
+            await setDoc(documento, paciente); 
             return documento.id;
         }
         catch {return "-1"}

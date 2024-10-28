@@ -23,7 +23,9 @@ export class EspecialistasService {
             const url = await getDownloadURL(storageRef); 
             especialista.imagenPerfil = url
 
-            setDoc(documento, especialista); 
+            console.log(documento);
+            console.log(especialista);
+            await setDoc(documento, especialista); 
             return documento.id;
         }
         catch {return "-1"}
@@ -49,7 +51,7 @@ export class EspecialistasService {
         try {        
             const col = collection(this.firestore, 'especialistas');
             const documento = doc(col, especialista.id);
-            console.log(documento);
+            // console.log(documento);
             await updateDoc(documento, {
                 nombre: especialista.nombre,
                 apellido: especialista.apellido,
