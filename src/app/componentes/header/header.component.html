@@ -23,6 +23,11 @@
 					@else {
 						<li class="nav-link px-2 text-white option" routerLink="/mis-turnos">Mis turnos</li>
 					}	
+
+					@if (auth.determinarTipoUsuario() == "administrador" || auth.determinarTipoUsuario() == "paciente")
+					{
+						<li class="nav-link px-2 text-white option" routerLink="/alta-turno">Solicitar turno</li>
+					}
 				}
             }          
         </ul>

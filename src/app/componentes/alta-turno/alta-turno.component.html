@@ -1,0 +1,39 @@
+<div class="container my-5">
+    <div class="row justify-content-center">
+       
+        <div class="card col-10 text-center p-4 text-dark contenedor">
+			
+			@if (!especialidadSelected) 
+			{
+				<h4>¿Sobre qué especialidad médica desea sacas un turno?</h4>
+				<br>
+				@for (item of arrayEspecialidades; track $index) {
+					<button appBtn class="btn" (click)="solicitarEspecilidad(arrayEspecialidades[$index])">{{arrayEspecialidades[$index]}}</button>
+					<br>
+				}
+			}
+			@else if (especialidadSelected && !especialistaSelected){
+				<h4>¿Qué especialista de tu confianza deseas que se encargue de tu turno?</h4>
+				<br>
+				@for (item of mostrarEspecialistas(turno.especialidad); track item) { 
+					<button appBtn class="btn" (click)="solicitarEspecilista(item.id)">{{item.nombre}} {{item.apellido}}</button>
+					<br>
+				}
+			}
+			@else if (especialistaSelected && !fechaSelected){
+				<h4>¿Qué horario prefieres para tu turno?</h4>
+				<br>
+	
+				@for (item of horariosDisponibles; track item) { 
+					<p >{{item["fecha"]}}</p>
+					@for (fecha of item["horarios"]; track fecha) 
+					{
+						<button appBtn class="btn" style="margin-bottom: 3px;">{{fecha}}</button>
+					}
+					<br>
+				}
+			}
+        </div>
+		
+    </div>
+</div>

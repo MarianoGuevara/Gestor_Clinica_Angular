@@ -27,9 +27,9 @@ export interface IAdministrador extends IUsuario {}
 export interface ITurno {
 	id: string;
 	especialidad: string;
-	especialista: string;
+	especialistaId: string;
 	horario: Date;
-	paciente: string;
+	pacienteId: string;
 	estado: string;
 	cancelado_especialista: string;
 	cancelado_paciente: string;

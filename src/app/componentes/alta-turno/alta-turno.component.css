@@ -1,0 +1,11 @@
+.contenedor {
+    background-color: rgb(232, 232, 232); /* Fondo gris */
+    padding: 20px; /* Espacio dentro del contenedor */
+    border-radius: 8px; /* Bordes redondeados para un mejor diseño */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil alrededor */
+    max-width: 600px; /* Limita el tamaño máximo del contenedor */
+	max-height: 400px;
+	overflow: scroll;
+    margin: 0 auto; /* Centra el contenedor */
+
+}
