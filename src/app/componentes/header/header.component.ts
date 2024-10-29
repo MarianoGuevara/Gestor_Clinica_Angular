@@ -2,6 +2,7 @@ import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../servicios/auth.service';
 import { BtnDirective } from '../../directivas/btn.directive';
+import { SpinnerComponent } from '../spinner/spinner.component';
 
 @Component({
   selector: 'app-header',
@@ -9,7 +10,8 @@ import { BtnDirective } from '../../directivas/btn.directive';
   imports: [
     RouterOutlet,
     RouterLink,
-    BtnDirective
+    BtnDirective,
+	SpinnerComponent
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'

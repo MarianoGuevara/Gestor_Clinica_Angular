@@ -1,0 +1,164 @@
+<div class="card">
+    <div class="card-header">
+        <h3>{{ user.usuarioRealActual?.nombre }} {{ user.usuarioRealActual?.apellido }}</h3>
+        <p><strong>Rol:</strong> {{ user.usuarioRealActual?.rol }}</p>
+    </div>
+    <div class="card-body">
+        <p><strong>Nombre:</strong> {{ user.usuarioRealActual?.nombre }}</p>
+        <p><strong>Apellido:</strong> {{ user.usuarioRealActual?.apellido }}</p>
+        <p><strong>Edad:</strong> {{ user.usuarioRealActual?.edad }}</p>
+        <p><strong>DNI:</strong> {{ user.usuarioRealActual?.dni }}</p>
+        <p><strong>Correo:</strong> {{ user.usuarioRealActual?.mail }}</p>
+        <img src="{{ user.usuarioRealActual?.imagenPerfil }}" alt="Imagen 1" class="user-image">
+
+		@if (user.usuarioRealActual != null){
+			@if (isPaciente(user.usuarioRealActual!)){
+				<img src="{{ user.usuarioRealActual.imagenPerfil2 }}" alt="Imagen 2" class="user-image">
+				<p><strong>Obra social:</strong> {{ user.usuarioRealActual.obraSocial }}</p>
+			}
+			@else if (isEspecialista(user.usuarioRealActual!)){
+				<p><strong>Especialidades:</strong> {{ user.usuarioRealActual.especialidad }}</p>
+	
+	
+				<a class="link-primary" style="margin-top: 15px; display: block" data-toggle="modal" data-target="#miModal">Seleccionar disponibilidad horaria</a>
+	
+				<div class="modal fade" id="miModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+					<div class="modal-dialog modal-lg modal-dialog-centered mx-auto" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modalTitle">{{user.usuarioRealActual.apellido}}, disponibilidad horaria</h5>
+							</div>
+							<div class="modal-body">
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th>Días</th> 
+											@for (item of horariosDiaSemana; track $index) {
+												<th>{{horariosDiaSemana[$index]}}</th>
+											}
+										</tr>
+									</thead>
+									<tbody>
+										@for (item of diaSemana; track item) {
+											<tr>
+												<th>{{item}}</th> 
+												@if (item != "sabado") {
+													@for (horario of horariosDiaSemana; track horario) {
+														
+														@if (horariosActual != null){
+															@switch (item) 
+															{
+																@case ("lunes"){
+																	@if (horarioEsta(horario, horariosActual.lunes)){
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}" checked/>
+																		</td>
+																	}
+																	@else{
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}"/>
+																		</td>
+																	}
+																}
+																	
+																@case ("martes"){
+																	@if (horarioEsta(horario, horariosActual.martes)){
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}" checked/>
+																		</td>
+																	}
+																	@else{
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}"/>
+																		</td>
+																	}
+																}
+																	
+																@case ("miercoles"){
+																	@if (horarioEsta(horario, horariosActual.miercoles)){
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}" checked/>
+																		</td>
+																	}
+																	@else{
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}"/>
+																		</td>
+																	}
+																}
+																	
+																@case ("jueves"){
+																	@if (horarioEsta(horario, horariosActual.jueves)){
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}" checked/>
+																		</td>
+																	}
+																	@else{
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}"/>
+																		</td>
+																	}
+																}
+																	
+																@case ("viernes"){
+																	@if (horarioEsta(horario, horariosActual.viernes)){
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}" checked/>
+																		</td>
+																	}
+																	@else{
+																		<td>
+																			<input type="checkbox" id="{{item}}-{{horario}}"/>
+																		</td>
+																	}
+																}
+															
+															}
+														}
+														@else { 
+															<td>
+																<input type="checkbox" id="{{item}}-{{horario}}"/>
+															</td>
+														}
+	
+													}
+												}
+												@else {
+													@for (horario of horariosfinDeSemana; track horario) {
+														@if (horariosActual != null)
+														{
+															@if (horarioEsta(horario, horariosActual.sabado)){
+																<td>
+																	<input type="checkbox" id="{{item}}-{{horario}}" checked/>
+																</td>
+															}
+															@else{
+																<td>
+																	<input type="checkbox" id="{{item}}-{{horario}}"/>
+																</td>
+															}
+														}
+														@else { 
+															<td>
+																<input type="checkbox" id="{{item}}-{{horario}}"/>
+															</td>
+														}
+													}
+												}
+											</tr>
+										}
+									</tbody>
+								</table>
+							</div>
+							<div class="modal-footer">
+								<button type="button" appBtn class="btn btn-primary" data-dismiss="modal" (click)="generarHorarios()">Guardar y salir</button>
+								<button type="button" appBtn btn="border" class="btn btn-secondary" data-dismiss="modal">Salir sin guardar</button>
+							</div>
+						</div>
+					</div>
+				</div>	
+			}
+		}
+		
+    </div>
+</div>

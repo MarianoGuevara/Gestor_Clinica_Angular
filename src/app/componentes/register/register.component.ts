@@ -163,7 +163,7 @@ export class RegisterComponent {
                         paciente.id = id;
                         this.loading.ocultarSpinner();
                         this.alert.Alerta("Paciente Registrado, verificar correo", "Bienvenido a la app, " + user.mail, 'success');
-                        this.auth.cerrarSesion("login");
+                        this.auth.cerrarSesion("/login");
                     }
                     else
                     {
@@ -202,7 +202,7 @@ export class RegisterComponent {
                         especialista.id = id;
                         this.loading.ocultarSpinner();
                         this.alert.Alerta("Especialista Registrado, verificar correo", "Bienvenido a la app, " + user.mail, 'success');
-                        this.auth.cerrarSesion("login");
+                        this.auth.cerrarSesion("/login");
                     }
                     else
                     {

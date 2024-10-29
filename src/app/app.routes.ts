@@ -14,11 +14,15 @@ export const routes: Routes = [
         loadComponent: ()=> import('./componentes/register/register.component').then(m => m.RegisterComponent)
     },
     {
-        path: 'home',
-        loadComponent: ()=> import('./componentes/home/home.component').then(m => m.HomeComponent)
-    },
-    {
         path: 'admin-usuarios',
         loadComponent: ()=> import('./componentes/seccion-usuarios-admin/seccion-usuarios-admin.component').then(m => m.SeccionUsuariosAdminComponent)
+    },
+	{
+        path: 'mis-turnos',
+        loadComponent: ()=> import('./componentes/pacientes-turnos/pacientes-turnos.component').then(m => m.PacientesTurnosComponent)
+    },
+	{
+        path: 'mi-perfil',
+        loadComponent: ()=> import('./componentes/mi-perfil/mi-perfil.component').then(m => m.MiPerfilComponent)
     },
 ];

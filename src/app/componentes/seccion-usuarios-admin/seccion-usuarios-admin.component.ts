@@ -108,23 +108,22 @@ export class SeccionUsuariosAdminComponent {
         this.suscripcionEspecialistas?.unsubscribe();
     }
 
-    habilitarEspecialista(user:IUsuario)
+    async habilitarEspecialista(user:IUsuario)
     {
         this.loading.mostrarSpinner();
         
         user.verificado = true;
-        this.serviceEspecialistas.actualizarEspecialista(user as IEspecialista)
-        .then((rta) => {
-            if (rta){
-                this.alert.Alerta("HABILITADO", "El especialista fue habilitado correctamente", 'success').then(()=>{
-                    this.loading.ocultarSpinner();
-                });
-            }
-            else {this.alert.Alerta("ERROR", "El especialista no pudo ser habilitado", 'error').then(()=>{
-                    this.loading.ocultarSpinner();
-                });
-            }
-        });
+        const rta = await this.serviceEspecialistas.actualizarEspecialista(user as IEspecialista)
+
+		if (rta){
+			this.alert.Alerta("HABILITADO", "El especialista fue habilitado correctamente", 'success').then(()=>{
+				this.loading.ocultarSpinner();
+			});
+		}
+		else {this.alert.Alerta("ERROR", "El especialista no pudo ser habilitado", 'error').then(()=>{
+				this.loading.ocultarSpinner();
+			});
+		}
     }
     deshabilitarEspecialista(user:IUsuario)
     {

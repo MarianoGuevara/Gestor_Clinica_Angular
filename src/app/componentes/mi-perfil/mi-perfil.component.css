@@ -1,0 +1,76 @@
+/* Estilos mejorados */
+.card {
+    width: 90%;
+    max-width: 600px;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin: 20px auto;
+    background-color: #fff;
+}
+
+.card-header {
+    background-color: #3a4046;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: 1.5em;
+    font-weight: 600;
+}
+
+.card-header p {
+    margin: 5px 0 0;
+    font-size: 1em;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.card-body {
+    padding: 20px;
+    line-height: 1.6;
+}
+
+.card-body p {
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #333;
+}
+
+.user-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    margin: 10px 10px 10px 0;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.card-body p strong {
+    color: #3a4046;
+}
+
+.link-primary:hover{
+	cursor: pointer;
+}
+
+.modal-dialog {
+    max-width: 90%; 
+    margin: 0 auto; 
+    padding: 0;
+}
+
+.modal-content {
+    width: 100%;
+    padding: 0; 
+    box-shadow: none; 
+}
+
+.modal-body {
+    overflow-x: auto; 
+    padding: 0; 
+}

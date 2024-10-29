@@ -2,18 +2,36 @@
     <!-- <div class="d-flex justify-content-center" style="margin-top: 0; margin-bottom: 15px;">
         <img src="assets/logo.png" width="100px" height="auto">
     </div> -->
-    <h4 class="mb-3">¡Bienvenido a la Clínica OnLine!</h4>
-    <p class="lead mb-2" style="font-size: 17px;">
-        En nuestra clínica te ofrecemos un servicio excepcional, tanto si eres cliente como trabajador. 
-        Disfruta de atención médica de calidad, con especialistas de distintas áreas, todo desde la comodidad de tu hogar.
-    </p>
-    
+
+	@if (auth.usuarioRealActual == null){
+		<h4 class="mb-3">¡Bienvenido a la Clínica OnLine!</h4>
+		<p class="lead mb-2" style="font-size: 17px;">
+			En nuestra clínica te ofrecemos un servicio excepcional, tanto si eres cliente como trabajador. 
+			Disfruta de atención médica de calidad, con especialistas de distintas áreas, todo desde la comodidad de tu hogar.
+		</p>
+	} @else {
+		<h4 class="mb-3">¡Bienvenido de nuevo, {{auth.usuarioRealActual.apellido}}!</h4>
+		<p class="lead mb-2" style="font-size: 17px;">
+			Disfruta de los servicios de siempre, con la mejor calidad.
+		</p>
+	}
+
     <div class="py-4 px-3 rounded" style="background-color:rgb(232, 232, 232)!important; margin-top: 30px;">
-        <p class="mb-4">Accede a tu cuenta o regístrate para comenzar a utilizar nuestros servicios.</p>
-        <div>
-            <button appBtn btn="border" type="button" class="btn me-2" routerLink="/login">Iniciar sesión</button>
-            <button appBtn btn="border" type="button" class="btn me-2" routerLink="/registro">Registrarse</button>
-        </div>
+		@if (auth.usuarioRealActual == null){
+			<p class="mb-4">Accede a tu cuenta o regístrate para comenzar a utilizar nuestros servicios.</p>
+			<div>
+				<button appBtn btn="border" type="button" class="btn me-2" routerLink="/login">Iniciar sesión</button>
+				<button appBtn btn="border" type="button" class="btn me-2" routerLink="/registro">Registrarse</button>
+			</div>
+		} @else {
+			<p class="mb-4">Ya estas logueado</p>
+			<div>
+				<!-- <button appBtn btn="border" type="button" class="btn me-2" routerLink="/login">Iniciar sesión</button>
+				<button appBtn btn="border" type="button" class="btn me-2" routerLink="/registro">Registrarse</button> -->
+			</div>
+		}
+
+        
     </div>
 </div>
 

@@ -24,14 +24,15 @@ export class AppComponent {
     private router = inject(Router);
 
     async ngOnInit(): Promise<void> {
-        this.loading.mostrarSpinner();
+        // this.loading.mostrarSpinner();
         try {
             const user = await this.auth.verificarSesion(); 
-            const verificado = await this.auth.verificarEmail(); 
+            
     
             if (user != null) {
-                if (verificado) {
-                    this.router.navigate(["/home"]);
+				const verificado = await this.auth.verificarEmail(); 
+                if (verificado || this.auth.usuarioRealActual?.rol == "administrador") {
+                    this.router.navigate(["/bienvenida"]);
                 } else {
                     this.auth.cerrarSesion("/bienvenida");
                 }
@@ -41,7 +42,7 @@ export class AppComponent {
         } catch (error) {
             console.error('Error al verificar sesión:', error);
         } finally {
-            this.loading.ocultarSpinner();
+            // this.loading.ocultarSpinner();
         }
     }
     

@@ -67,7 +67,7 @@ export class LoginComponent {
                     {
                         this.auth.logueado = true;
                         this.auth.usuarioActual = retorno.user;
-                        this.alert.Alerta("Exito", "Bienvenido, " + usuario?.mail, 'success', this.auth.logueado, "/home");
+                        this.alert.Alerta("Exito", "Bienvenido, " + usuario?.mail, 'success', this.auth.logueado, "/bienvenida");
                     }
                     else
                     {

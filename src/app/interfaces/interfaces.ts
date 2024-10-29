@@ -1,26 +1,50 @@
-// interfaces.ts
 export interface IUsuario {
-    nombre: string;
-    apellido: string;
-    edad: number;
-    dni: number;
-    mail: string;
-    password: string;
-    imagenPerfil: string;
-    rol: string;
-    verificado: boolean;
-    id: string;
+  nombre: string;
+  apellido: string;
+  edad: number;
+  dni: number;
+  mail: string;
+  password: string;
+  imagenPerfil: string;
+  rol: string;
+  verificado: boolean;
+  id: string;
 }
 
 export interface IPaciente extends IUsuario {
-    obraSocial: string;
-    imagenPerfil2: string;
+  obraSocial: string;
+  imagenPerfil2: string;
 }
 
 export interface IEspecialista extends IUsuario {
-    especialidad: string[];
+  especialidad: string[];
 }
 
-export interface IAdministrador extends IUsuario {
-    // Si tiene alguna propiedad única, se puede agregar aquí
+export interface IAdministrador extends IUsuario {}
+
+/////////////////////////////////////////////
+
+export interface ITurno {
+	id: string;
+	especialidad: string;
+	especialista: string;
+	horario: Date;
+	paciente: string;
+	estado: string;
+	cancelado_especialista: string;
+	cancelado_paciente: string;
+	completado_especialista: string; 
+	completado_paciente_encuesta: string;
+	completado_paciente_atencion: string;  
+}
+
+export interface IHorariosEspecialista {
+	id: string;
+	idEspecialista: string;
+	lunes: string[];
+	martes: string[];
+	miercoles: string[];
+	jueves: string[];
+	viernes: string[];
+	sabado: string[];
 }

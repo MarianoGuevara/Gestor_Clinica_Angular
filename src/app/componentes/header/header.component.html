@@ -1,8 +1,8 @@
+
 <header class="p-3 text-bg-dark header">
     <div class="container">
       <div
         class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-
 
         <img routerLink="/bienvenida" class="bi me-2 img" width="40px" height="auto" role="img" aria-label="Bootstrap" src="assets/logo.png" alt="logo"/>
   
@@ -11,14 +11,20 @@
                 <li class="nav-link px-2 text-white option" routerLink="/bienvenida">¡Bienvenido/a a la clínica 'OnLine'!</li>
             }
             @else {
-                <li class="nav-link px-2 text-white option" routerLink="/home">Home</li>
+                <li class="nav-link px-2 text-white option" routerLink="/bienvenida">Home</li>
 
-                @if (auth.usuarioRealActual != null && auth.determinarTipoUsuario() == "administrador"){
-                    <li class="nav-link px-2 text-white option" routerLink="/admin-usuarios">Seccion usuarios</li>
-                }
-            }
-
-          
+				@if (auth.usuarioRealActual == null){
+					<app-spinner></app-spinner>
+				}
+				@else {
+					@if (auth.determinarTipoUsuario() == "administrador"){
+						<li class="nav-link px-2 text-white option" routerLink="/admin-usuarios">Seccion usuarios</li>
+					}
+					@else {
+						<li class="nav-link px-2 text-white option" routerLink="/mis-turnos">Mis turnos</li>
+					}	
+				}
+            }          
         </ul>
   
         <div class="d-flex align-items-center text-end">
@@ -26,8 +32,11 @@
           {
               @if (auth.usuarioActual != null) 
               {
-                  <p class="mb-0 me-3">{{auth.usuarioActual.email}}</p>
-                  <img src="{{auth.usuarioRealActual?.imagenPerfil}}" class="ftoPerfil">
+				<button type="button" class="btn btn-outline-light btn-perfil" routerLink="mi-perfil">
+					Mi perfil
+					<img src="{{auth.usuarioRealActual?.imagenPerfil}}" class="ftoPerfil">
+				</button>
+				  
               }
   
               <button type="button" class="btn btn-outline-light me-2" (click)="cerrarSesion()">Cerrar Sesión</button>
