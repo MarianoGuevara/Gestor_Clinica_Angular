@@ -28,7 +28,8 @@ export interface ITurno {
 	id: string;
 	especialidad: string;
 	especialistaId: string;
-	horario: Date;
+	fecha: string;
+	horario: string;
 	pacienteId: string;
 	estado: string;
 	cancelado_especialista: string;

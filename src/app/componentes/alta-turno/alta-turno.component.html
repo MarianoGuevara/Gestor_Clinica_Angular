@@ -3,7 +3,16 @@
        
         <div class="card col-10 text-center p-4 text-dark contenedor">
 			
-			@if (!especialidadSelected) 
+			@if (auth.usuarioRealActual?.rol == "administrador" && !pacienteSeleccionado)
+			{
+				<h4>¡Administrador {{auth.usuarioRealActual?.apellido}}! ¿A qué paciente le desea sacar turno?</h4>
+				<br>
+				@for (item of arrayPacientes; track $index) {
+					<button appBtn class="btn" (click)="solicitarPaciente(arrayPacientes[$index])">{{arrayPacientes[$index].nombre}} {{arrayPacientes[$index].apellido}}</button>
+					<br>
+				}
+			}
+			@else if (!especialidadSelected) 
 			{
 				<h4>¿Sobre qué especialidad médica desea sacas un turno?</h4>
 				<br>
@@ -28,7 +37,7 @@
 					<p >{{item["fecha"]}}</p>
 					@for (fecha of item["horarios"]; track fecha) 
 					{
-						<button appBtn class="btn" style="margin-bottom: 3px;">{{fecha}}</button>
+						<button (click)="seleccionarHorario(item['fecha'], fecha)" appBtn class="btn" style="margin-bottom: 3px;">{{fecha}}</button>
 					}
 					<br>
 				}
