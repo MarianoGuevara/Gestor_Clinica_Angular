@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { AuthService } from '../../servicios/auth.service';
 import { AlertService } from '../../servicios/alert.service';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -38,6 +38,8 @@ export class RegisterComponent {
     img2: Blob | null = null;
     pacientesService = inject(PacientesService)
     especialistasService = inject(EspecialistasService)
+	rolElegido:boolean = false;
+	@Input() admin: IAdministrador|null = null;
 
     constructor(){
         this.formGroupMio = this.fb.group({ 
@@ -60,28 +62,6 @@ export class RegisterComponent {
             especialidadPropia: ["", []]
         });
 
-
-        this.loading.mostrarSpinner();
-
-        this.alert.AlertaConDosBotones("Cual será su rol en el sistema?", "Usted se quiere registrar como paciente o especialista?", "Paciente", "Especialista")
-        .then((retorno) => {
-            console.log(retorno);
-            if (retorno) 
-            {
-                this.rol = "paciente";
-            }
-            else
-            {
-                this.rol = "especialista"
-            }
-        })
-        .catch((error) => {
-            console.log((error as Error).message);
-        })
-        .finally(() => {
-            console.log(this.rol);
-            this.loading.ocultarSpinner();
-        });
     }
 
     obtenerMensajeError(campo: string, formGroup:string){
@@ -164,6 +144,8 @@ export class RegisterComponent {
                         this.loading.ocultarSpinner();
                         this.alert.Alerta("Paciente Registrado, verificar correo", "Bienvenido a la app, " + user.mail, 'success');
                         this.auth.cerrarSesion("/login");
+
+						if (this.admin != null) {this.auth.loguearse(this.admin);}
                     }
                     else
                     {
@@ -202,7 +184,9 @@ export class RegisterComponent {
                         especialista.id = id;
                         this.loading.ocultarSpinner();
                         this.alert.Alerta("Especialista Registrado, verificar correo", "Bienvenido a la app, " + user.mail, 'success');
-                        this.auth.cerrarSesion("/login");
+
+						if (this.admin != null) {this.auth.loguearse(this.admin);}
+						else {this.auth.cerrarSesion("/login");}
                     }
                     else
                     {

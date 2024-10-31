@@ -24,3 +24,47 @@
       margin-top: 25px !important;
       background-color: rgb(237, 237, 237) !important;
 }
+
+
+.user-options {
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.user-options.ng-enter, .user-options.ng-leave {
+    opacity: 0;
+}
+
+.user-options.ng-enter-active {
+    opacity: 1;
+}
+
+.user-options.ng-leave-active {
+    opacity: 0;
+}
+.quick-access {
+	display: flex; /* Usar Flexbox para alinear elementos */
+	align-items: center; /* Alinear verticalmente al centro */
+  }
+  
+  .small-circle {
+	border-radius: 50%; /* Hace que el botón sea circular */
+	width: 40px; /* Ajusta el tamaño según sea necesario */
+	height: 40px; /* Ajusta el tamaño según sea necesario */
+	display: flex; /* Centra el contenido del botón */
+	align-items: center; /* Centra verticalmente el contenido */
+	justify-content: center; /* Centra horizontalmente el contenido */
+	margin-right: 10px; /* Espacio a la derecha del botón principal */
+  }
+  
+  .user-button {
+	width: 40px; /* Ajusta el tamaño según sea necesario */
+	height: 40px; /* Ajusta el tamaño según sea necesario */
+	border-radius: 50%; /* Hace que el botón sea circular */
+	padding: 0; /* Elimina el padding por defecto */
+  }
+  
+  .user-button img {
+	width: 20px; /* Ajusta el tamaño de la imagen */
+	height: 20px; /* Ajusta el tamaño de la imagen */
+  }

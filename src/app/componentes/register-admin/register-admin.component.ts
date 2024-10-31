@@ -9,6 +9,7 @@ import { BtnDirective } from '../../directivas/btn.directive';
 import { IAdministrador } from '../../interfaces/interfaces';
 import { AdminService } from '../../servicios/admin.service';
 import { IUsuario } from '../../interfaces/interfaces';
+import { RegisterComponent } from '../register/register.component';
 
 @Component({
   selector: 'app-register-admin',
@@ -17,7 +18,8 @@ import { IUsuario } from '../../interfaces/interfaces';
     RouterLink,
     FormsModule,
     ReactiveFormsModule,
-    BtnDirective
+    BtnDirective,
+	RegisterComponent
   ],
   templateUrl: './register-admin.component.html',
   styleUrl: './register-admin.component.css'
@@ -30,6 +32,9 @@ export class RegisterAdminComponent {
     loading = inject(LoadingService);
     alert = inject(AlertService);
     adminservice = inject(AdminService)
+	formActual:string = "admin";
+	userClonMail: string = "";
+	userClonPass: string = ""
 
     constructor()
     {
@@ -83,6 +88,9 @@ export class RegisterAdminComponent {
     {
         this.loading.mostrarSpinner();
 
+		this.userClonMail = this.auth.usuarioRealActual?.mail || "";
+		this.userClonPass = this.auth.usuarioRealActual?.password || "";
+
         const user: IUsuario = {
             nombre: this.formGroupMio.get("nombre")?.value,
             apellido: this.formGroupMio.get("apellido")?.value,
@@ -126,8 +134,25 @@ export class RegisterAdminComponent {
                 if (id != "-1")
                 {
                     admin.id = id;
-                    this.loading.ocultarSpinner();
-                    this.alert.Alerta("Admin Registrado", "Bienvenido a la app, " + user.mail, 'success', this.auth.logueado, "/home");
+    
+					const user: IUsuario = {
+						nombre: "",
+						apellido: "",
+						edad: -1,
+						dni: -1,
+						mail: this.userClonMail,
+						password: this.userClonPass,
+						imagenPerfil: "",
+						rol: "", 
+						verificado: false,
+						id: ""
+					};
+
+					this.auth.loguearse(user);
+
+					this.alert.Alerta("Exito", "Nuevo admin dado de alta con exito", 'success').then(()=>{
+						this.loading.ocultarSpinner();
+					});
                 }
                 else
                 {
@@ -155,3 +180,4 @@ export class RegisterAdminComponent {
         });
     }
 }
+

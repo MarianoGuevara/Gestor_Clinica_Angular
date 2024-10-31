@@ -58,13 +58,42 @@
       <button appBtn [disabled]="!formGroupMio.valid" class="btn w-100 py-2" type="submit">Ingresar</button>
       <a routerLink="/registro" class="link-primary" style="margin-top: 15px; display: block">¿Aún no tienes cuenta? ¡Regístrate aquí!</a>
 
-      <div class="quick-access text-center" style="margin-top: 35px;">
-        <h5 class=" mb-3">Usuarios de acceso rápido</h5>
-        <div class="btn-group" role="group" aria-label="Quick access users">
-          <button (click)="LlenarUsers('admin@admin.com','123456')" class="btn btn-outline-secondary" type="button">Admin</button>
-          <button (click)="LlenarUsers('nicolascapurro2005@gmail.com','123456')" class="btn btn-outline-secondary" type="button">Paciente</button>
-          <button (click)="LlenarUsers('marianoguevara2005@gmail.com','654321')" class="btn btn-outline-secondary" type="button">Especialista</button>
-        </div>
-      </div>
+
+	  <div class="quick-access text-center" style="margin-top: 15px;">
+		<div class="quick-access d-flex align-items-center">
+			<button (click)="mostrarPacientes = !mostrarPacientes" class="btn btn-outline-secondary small-circle" type="button">P</button>
+			<div class="user-options d-flex" [@fadeIn]="mostrarPacientes ? 'show' : 'hide'">
+			  @for (user of pacientes; track user) {
+				<button (click)="LlenarUsers(user.mail,user.clave)" class="btn btn-outline-secondary small-circle user-button" type="button">
+					<img [src]="user.img" alt="Paci" />
+				</button>
+			  }
+			</div>
+	    </div>	
+	  </div>
+	  <div class="quick-access text-center" style="margin-top: 15px;">
+		<div class="quick-access d-flex align-items-center">
+			<button (click)="mostrarEspecialistas = !mostrarEspecialistas" class="btn btn-outline-secondary small-circle" type="button">E</button>
+			<div class="user-options d-flex" [@fadeIn]="mostrarEspecialistas ? 'show' : 'hide'">
+			  @for (user of especialistas; track user) {
+				<button (click)="LlenarUsers(user.mail,user.clave)" class="btn btn-outline-secondary small-circle user-button" type="button">
+					<img [src]="user.img" alt="Espe" />
+				</button>
+			  }
+			</div>
+	    </div>	
+	  </div>
+	  <div class="quick-access text-center" style="margin-top: 15px;">
+		<div class="quick-access d-flex align-items-center">
+			<button (click)="mostrarAdministradores = !mostrarAdministradores" class="btn btn-outline-secondary small-circle" type="button">A</button>
+			<div class="user-options d-flex" [@fadeIn]="mostrarAdministradores ? 'show' : 'hide'">
+			  @for (user of administradores; track user) {
+				<button (click)="LlenarUsers(user.mail,user.clave)" class="btn btn-outline-secondary small-circle user-button" type="button">
+					<img [src]="user.img" alt="Admin" />
+				</button>
+			  }
+			</div>
+	    </div>	
+	  </div>
     </form>
   </main>

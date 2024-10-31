@@ -9,6 +9,7 @@ import { getStorage, provideStorage } from '@angular/fire/storage';
 
 import { environment } from '../environments/environment.development';
 import { provideHttpClient, withFetch } from '@angular/common/http'; // para tirar requests a apis
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -20,5 +21,6 @@ export const appConfig: ApplicationConfig = {
     provideStorage(() => getStorage()),
     
     provideHttpClient(withFetch()), // para tirar requests a apis
+	provideAnimations()
 ]
 };

@@ -76,3 +76,42 @@ ul {
     padding: 0;
     margin: 0;
 }
+
+
+.button-container {
+    display: flex; /* Usar Flexbox para alinear los botones */
+    justify-content: center; /* Centrar los botones horizontalmente */
+}
+
+.user-button {
+    background-color: transparent; /* Fondo transparente */
+    border: none; /* Sin borde */
+    padding: 0; /* Sin padding */
+    margin: 0 10px; /* Espaciado entre botones */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+}
+
+.user-button img {
+    width: 100px; /* Ajusta el tamaño de la imagen */
+    height: 75px; /* Ajusta el tamaño de la imagen */
+    object-fit: cover; /* Asegura que la imagen mantenga la proporción */
+}
+
+.btn:hover{
+	background-color: gray;
+}
+
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-40px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.slide-down {
+    animation: slideDown 1s ease forwards; /* 0.3 segundos de duración */
+}
