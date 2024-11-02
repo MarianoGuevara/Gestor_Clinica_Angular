@@ -28,12 +28,16 @@ export interface ITurno {
 	id: string;
 	especialidad: string;
 	especialistaId: string;
+	especialistaNombreApellido: string;
 	fecha: string;
 	horario: string;
 	pacienteId: string;
+	pacienteNombreApellido: string;
 	estado: string;
+	rechazado_especialista: string;
 	cancelado_especialista: string;
 	cancelado_paciente: string;
+	cancelado_administrador: string;
 	completado_especialista: string; 
 	completado_paciente_encuesta: string;
 	completado_paciente_atencion: string;  

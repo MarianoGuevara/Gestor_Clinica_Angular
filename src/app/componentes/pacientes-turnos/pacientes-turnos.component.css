@@ -1,0 +1,76 @@
+.turnos-container {
+    display: flex;
+    flex-wrap: nowrap; 
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    max-width: 90%; 
+    overflow-x: auto; 
+    margin: 0 auto;
+    margin-top: 20px;
+    border: 1px solid #ced4da;
+    background-color: #f1f1f1;
+    white-space: nowrap; 
+}
+
+.turno-card {
+    min-width: 300px; 
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    transition: transform 0.3s;
+}
+
+.turno-header {
+    background-color: rgb(58, 64, 70);
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px 8px 0 0;
+}
+
+.turno-body {
+    word-wrap: break-word; 
+    overflow: scroll; 
+    text-overflow: ellipsis; 
+}
+
+.turno-body p {
+    margin: 5px 0;
+}
+
+.button-container {
+    display: flex;
+    gap: 10px; 
+    flex-wrap: wrap; 
+    justify-content: center; 
+}
+
+.button-container .btn {
+    flex: 1; 
+    min-width: 100px; 
+}
+
+.input-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.input-and-button {  /* Nuevo estilo para el contenedor del input y el botón */
+    display: flex;
+    flex-direction: column;  /* Asegura que el botón esté debajo del input */
+    align-items: center;      /* Opcional: centra el contenido horizontalmente */
+    width: 100%;              /* Asegúrate de que ocupe todo el ancho disponible */
+}
+
+.filtro-input {
+    width: 80%; /* Ajusta el porcentaje según el ancho deseado */
+    max-width: 600px; /* Ancho máximo opcional */
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px; /* Agrega un margen inferior para espaciar el input del botón */
+}

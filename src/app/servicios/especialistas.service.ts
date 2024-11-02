@@ -39,6 +39,13 @@ export class EspecialistasService {
         return observable;
     }
 
+	async GetEspecialistaId(id:string)
+    {
+        const especialistaQuery = query(collection(this.firestore, 'especialistas'), where('id', '==', id));
+        const especialistaDocs = await getDocs(especialistaQuery);
+        return especialistaDocs;
+    }
+	
     async GetEspecialista(email:string)
     {
         const especialistaQuery = query(collection(this.firestore, 'especialistas'), where('mail', '==', email));

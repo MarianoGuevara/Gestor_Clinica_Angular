@@ -25,7 +25,7 @@
 				<h4>¿Qué especialista de tu confianza deseas que se encargue de tu turno?</h4>
 				<br>
 				@for (item of mostrarEspecialistas(turno.especialidad); track item) { 
-					<button appBtn class="btn" (click)="solicitarEspecilista(item.id)">{{item.nombre}} {{item.apellido}}</button>
+					<button appBtn class="btn" (click)="solicitarEspecilista(item.id, item.nombre, item.apellido)">{{item.nombre}} {{item.apellido}}</button>
 					<br>
 				}
 			}

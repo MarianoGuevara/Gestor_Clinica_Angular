@@ -30,10 +30,46 @@ export class TurnosService {
         return observable;
     }
 
-    // async GetTurno(email:string)
-    // {
-    //     const TurnoQuery = query(collection(this.firestore, 'Turnos'), where('mail', '==', email));
-    //     const especialistaDocs = await getDocs(TurnoQuery);
-    //     return especialistaDocs;
-    // }
+    async GetTurnosEspecialistaId(idEspecialista:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'turnos'),
+		    where('especialistaId', '==', idEspecialista), 
+			where('estado', '==', 'Aceptado')
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
+	async actualizarTurno(turno:ITurno)
+    {
+        try {        
+            const col = collection(this.firestore, 'turnos');
+            const documento = doc(col, turno.id);
+			console.log(documento);
+            await updateDoc(documento, {
+				id: turno.id,
+				especialidad: turno.especialidad,
+				especialistaId: turno.especialistaId,
+				especialistaNombreApellido: turno.especialistaNombreApellido,
+				fecha: turno.fecha,
+				horario: turno.horario,
+				pacienteId: turno.pacienteId,
+				pacienteNombreApellido: turno.pacienteNombreApellido,
+				estado: turno.estado,
+				rechazado_especialista: turno.rechazado_especialista,
+				cancelado_especialista: turno.cancelado_especialista,
+				cancelado_paciente: turno.cancelado_paciente,
+				cancelado_administrador: turno.cancelado_administrador,
+				completado_especialista: turno.completado_especialista,
+				completado_paciente_encuesta: turno.completado_paciente_encuesta,
+				completado_paciente_atencion: turno.completado_paciente_atencion
+            });
+            return true
+        }
+		catch (error) {
+			console.error("Error al actualizar el turno:", error);
+			return false;
+		}
+    }
 }

@@ -1,1 +1,114 @@
-<p>pacientes-turnos works!</p>
+<h3 class="text-center" style="margin-top: 30px;">Sus turnos, {{auth.usuarioRealActual?.apellido}}</h3>
+<div class="input-container">
+	<input type="text" (input)="filtroChange(filtroActual)" [(ngModel)]="filtroActual" placeholder="filtrar turnos" class="filtro-input">
+</div>
+<div class="turnos-container">
+	
+	@for (turno of turnosFiltrado; track $index) {
+		<div class="turno-card">
+			<div class="turno-header">
+				<h4 style="margin-bottom: 10px;"><strong>{{ turnosFiltrado[$index].especialidad }}</strong></h4>
+				<p><strong>Fecha:</strong> {{ turnosFiltrado[$index].fecha }}</p>
+				<p><strong>Horario:</strong> {{ turnosFiltrado[$index].horario }}</p>
+
+				<div class="button-container">
+					@switch (turnosFiltrado[$index].estado) {
+						@case ("Pendiente de aprobacion") {
+							@if (auth.usuarioRealActual?.rol == "paciente" || auth.usuarioRealActual?.rol == "administrador") {
+								<button appBtn (click)="accionModal('cancelar', turnosFiltrado[$index])" class="btn w-100 py-2" type="submit">Cancelar turno</button>
+							}
+							@else if (auth.usuarioRealActual?.rol == "especialista") {
+								<button appBtn (click)="accionModal('aceptar-especialista', turnosFiltrado[$index])"  class="btn w-100 py-2" type="submit">Aceptar turno</button>
+								<button appBtn (click)="accionModal('rechazar-especialista', turnosFiltrado[$index])"  class="btn w-100 py-2" type="submit">Rechazar turno</button>
+							}
+						}
+						@case ("Cancelado") {
+							@if (auth.usuarioRealActual?.rol == "paciente") {
+								<button appBtn (click)="accionModal('vercomentario', turnosFiltrado[$index])" class="btn w-100 py-2" type="submit">Ver comentario</button>
+							}
+							@else if (auth.usuarioRealActual?.rol == "especialista") {
+								<button appBtn (click)="accionModal('vercomentario', turnosFiltrado[$index])" class="btn w-100 py-2" type="submit">Ver comentario</button>
+							}
+						}
+						@case ("Rechazado") {
+							@if (auth.usuarioRealActual?.rol == "paciente") {
+								<button appBtn (click)="accionModal('vercomentario', turnosFiltrado[$index])" class="btn w-100 py-2" type="submit">Ver comentario</button>
+							}
+							@else if (auth.usuarioRealActual?.rol == "especialista") {
+								<button appBtn (click)="accionModal('vercomentario', turnosFiltrado[$index])" class="btn w-100 py-2" type="submit">Ver comentario</button>
+							}
+						}
+						@case ("Aceptado") {
+							@if (auth.usuarioRealActual?.rol == "paciente" || auth.usuarioRealActual?.rol == "administrador") {
+								<button appBtn (click)="accionModal('cancelar', turnosFiltrado[$index])"  class="btn w-100 py-2" type="submit">Cancelar turno</button>
+							}
+							@else if (auth.usuarioRealActual?.rol == "especialista") {
+								<button appBtn btn="border" (click)="accionModal('cancelar', turnosFiltrado[$index])"  class="btn w-100 py-2" type="submit">Cancelar turno</button>
+								<button appBtn (click)="accionModal('finalizar', turnosFiltrado[$index])"  class="btn w-100 py-2" type="submit">Finalizar turno</button>
+							}
+						}
+						@case ("Finalizado") {
+							@if (auth.usuarioRealActual?.rol == "paciente") {
+								<button appBtn (click)="accionModal('vercomentario', turnosFiltrado[$index])"  class="btn w-100 py-2" type="submit">Ver reseña</button>
+								@if (turnosFiltrado[$index].completado_paciente_atencion == "") {
+									<button appBtn btn="border" (click)="accionModal('encuesta-paciente', turnosFiltrado[$index])"  class="btn w-100 py-2" type="submit">Encuesta</button>
+								}
+							}
+							@else if (auth.usuarioRealActual?.rol == "especialista") {
+								<button appBtn (click)="accionModal('vercomentario', turnosFiltrado[$index])"  class="btn w-100 py-2" type="submit">Ver reseña</button>
+							}
+						}
+					}
+				</div>
+
+			</div>
+			<div class="turno-body">
+				<p><strong>Estado:</strong> {{ turnosFiltrado[$index].estado }}</p>
+				<p><strong>Especialista:</strong> {{ turnosFiltrado[$index].especialistaNombreApellido}}</p>
+				<p><strong>Paciente:</strong> {{ turnosFiltrado[$index].pacienteNombreApellido }}</p>
+			</div>
+		</div>
+	}
+</div>
+	
+
+<!-- modal  -->
+<!-- modal  -->
+<div class="modal fade" id="modalCancelar" #modalCancelar tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered mx-auto" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle">Sobre el turno...</h5>
+            </div>
+            <div class="modal-body">
+                <div class="input-container">
+                    <div class="input-and-button"> <!-- Nuevo contenedor para el input y el botón -->
+                        @if (accionParaModal == "cancelar") {
+							
+                            <input type="text" [(ngModel)]="modalInput1" placeholder="Comentario de cancelación" class="filtro-input">
+							<button type="button" (click)="accionModal('', null, 'cerrar')" appBtn btn="border" class="btn btn-primary">Subir comentario</button>
+                        }
+                        @else if (accionBotonModal == "vercomentario") {
+                            <p>{{modalOutput1}}</p>
+							@if (turnoTocadoActual?.estado == "Finalizado" && turnoTocadoActual?.completado_paciente_atencion != "") {
+								<p>{{modalOutput2}}</p>
+							}
+							<button type="button" (click)="accionModal('', null, 'cerrar')" appBtn btn="border" class="btn btn-primary">Cerrar</button>
+                        }
+                        @else if (accionBotonModal == "finalizar") {
+                            <input type="text" [(ngModel)]="modalInput1" placeholder="Deje su reseña/diagnóstico" class="filtro-input">
+							<button type="button" (click)="accionModal('', null, 'cerrar')" appBtn btn="border" class="btn btn-primary">Subir reseña</button>
+                        }
+						@else if (accionBotonModal == "encuesta-paciente") {
+                            <input type="text" [(ngModel)]="modalInput1" placeholder="Deje su comentario sobre el turno en general" class="filtro-input">
+							<input type="text" [(ngModel)]="modalInput2" placeholder="¿Cómo fue la atención del especialista?" class="filtro-input">
+							<button type="button" (click)="accionModal('', null, 'cerrar')" appBtn btn="border" class="btn btn-primary">Subir encuesta</button>
+                        }
+						
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

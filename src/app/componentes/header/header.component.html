@@ -19,6 +19,7 @@
 				@else {
 					@if (auth.determinarTipoUsuario() == "administrador"){
 						<li class="nav-link px-2 text-white option" routerLink="/admin-usuarios">Seccion usuarios</li>
+						<li class="nav-link px-2 text-white option" routerLink="/mis-turnos">Turnos</li>
 					}
 					@else {
 						<li class="nav-link px-2 text-white option" routerLink="/mis-turnos">Mis turnos</li>

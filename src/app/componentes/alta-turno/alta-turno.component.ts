@@ -41,12 +41,16 @@ export class AltaTurnoComponent {
 		id : "",
 		especialidad : "",
 		especialistaId : "",
+		especialistaNombreApellido : "",
 		fecha: "",
 		horario: "",
 		pacienteId: "",
+		pacienteNombreApellido : "",
 		estado: "",
+		rechazado_especialista: "",
 		cancelado_especialista: "",
 		cancelado_paciente: "",
+		cancelado_administrador: "",
 		completado_especialista: "",
 		completado_paciente_encuesta: "",
 		completado_paciente_atencion: "",
@@ -153,16 +157,18 @@ export class AltaTurnoComponent {
 
 	solicitarPaciente(paciente: IPaciente)
 	{
-		console.log("PIJAZA")
-		console.log(paciente);
 		this.pacienteSeleccionado = true;
 		this.turno.pacienteId = paciente.id;
+		this.turno.pacienteNombreApellido = paciente.nombre + " " + paciente.apellido;
 	}
 
 	solicitarEspecilidad(selected: string) {
 		this.especialidadSelected = true;
 		this.turno.especialidad = selected 
-		if (this.auth.usuarioRealActual?.rol != "administrador") {this.turno.pacienteId = this.auth.usuarioRealActual?.id || "";}
+		if (this.auth.usuarioRealActual?.rol != "administrador") {
+			this.turno.pacienteId = this.auth.usuarioRealActual?.id || "";
+			this.turno.pacienteNombreApellido = this.auth.usuarioRealActual?.nombre + " " + this.auth.usuarioRealActual?.apellido;
+		}
 		
 	}
 
@@ -186,9 +192,10 @@ export class AltaTurnoComponent {
 		return arrayEspecialistasValidos;
 	}
 	
-	solicitarEspecilista(selected: string) {
+	solicitarEspecilista(id: string, nombre:string, apellido:string) {
 		this.especialistaSelected = true;
-		this.turno.especialistaId = selected 
+		this.turno.especialistaId = id;
+		this.turno.especialistaNombreApellido = nombre + " " + apellido;
 		this.traerFechasDisponibles();
 	}
 
@@ -212,7 +219,8 @@ export class AltaTurnoComponent {
 		}
 	}
 
-	mostrarFechasDisponibles(horarios: IHorariosEspecialista) {
+	async mostrarFechasDisponibles(horarios: IHorariosEspecialista) {
+		this.loading.mostrarSpinner();
 		// horarios disponibles es el array con -> dia : ["8:00", "8:30"] etc del especialista
 		const resultado: any = {
 			lunes: { fechas: [] },
@@ -274,7 +282,13 @@ export class AltaTurnoComponent {
 		fechasDisponibles.sort((a, b) => new Date(a.fecha.split(' ')[0]).getTime() - new Date(b.fecha.split(' ')[0]).getTime());
 	
 		this.horariosDisponibles = fechasDisponibles;
-		console.log(this.horariosDisponibles);
+		console.log("HORARIOS DISPONIBLES -> ", this.horariosDisponibles);
+		const rta = await this.obtenerTurnosEspecialistaOcupado(this.turno.especialistaId);
+		console.log(rta);
+		this.extraerTurnosEspecificos(this.horariosDisponibles, rta);
+		console.log("HORARIOS DISPONIBLES LAST-> ", this.horariosDisponibles);
+		
+		this.loading.ocultarSpinner();
 		return fechasDisponibles;
 	}
 	
@@ -284,7 +298,8 @@ export class AltaTurnoComponent {
 		this.fechaSelected = true;
 		this.turno.fecha = fecha;
 		this.turno.horario = horario;
-
+		this.turno.estado = "Pendiente de aprobacion";
+		
 		this.turnosService.Alta(this.turno)
 		.then((rta) => {
 			this.turno.id = rta;
@@ -301,6 +316,36 @@ export class AltaTurnoComponent {
 			this.loading.ocultarSpinner();
 		});
 		console.log(this.turno);
+	}
+
+	async obtenerTurnosEspecialistaOcupado(especialistaId:string){
+
+		const turnos = await this.turnosService.GetTurnosEspecialistaId(especialistaId);
+		const arrayTurnos = turnos.docs;
+		let arrayRetornoTurnos: any[] = [];
+		for (let i=0; i<arrayTurnos.length; i++)
+		{	
+			arrayRetornoTurnos.push({
+				fecha : arrayTurnos[i].data()["fecha"],
+				horario : arrayTurnos[i].data()["horario"],
+			})
+		}
+		return arrayRetornoTurnos;
+	}
+
+	extraerTurnosEspecificos(arrayDisponibilidad:any[], arrayTurnosEspecificos:any[]) {
+		for (let i=0; i<arrayDisponibilidad.length; i++) {
+			for (let j=0; j<arrayTurnosEspecificos.length; j++) {
+				if (arrayDisponibilidad[i].fecha == arrayTurnosEspecificos[j].fecha) {
+					for (let k=0; k<arrayDisponibilidad[i].horarios.length; k++) {
+						if (arrayDisponibilidad[i].horarios[k] == arrayTurnosEspecificos[j].horario) {
+							console.log("BORRANDING");
+							arrayDisponibilidad[i].horarios.splice(k,1);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	ngOnDestroy(): void {

@@ -39,7 +39,7 @@ export class MiPerfilComponent {
 	];
 	horariosActual: IHorariosEspecialista | null = null;
 
-	constructor()
+	ngOnInit()
 	{
 		// this.loading.mostrarSpinner();
 		this.horariosService.GetHorario(this.user.usuarioRealActual?.id!)
