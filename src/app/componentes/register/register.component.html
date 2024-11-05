@@ -163,16 +163,21 @@
 				}
 			</div>
 		  
+			<div class="d-flex justify-content-center" style="margin: 20px 0;">
+				<app-captcha (captchaCompletado)="enCaptchaCompletado($event)"></app-captcha> 
+			</div>
+
 			@if (rol == "paciente")
 			{
 				<button appBtn [disabled]="!formGroupMio.valid || !formPaciente.valid" class="btn w-100 py-2" type="submit">Registrarse</button>
 			}
 			@else if (rol == "especialista") 
 			{
+				
 				@if (arrayEspecialidades.length > 0) {
 					<button appBtn [disabled]="!formGroupMio.valid || !formEspecialista.valid" class="btn w-100 py-2" type="submit">Registrarse</button>
 				}
-				@else {
+				@else {	
 					<!-- <p style="color: rgb(255, 95, 95);">El especialista debe tener al menos 1 especialidad...</p> -->
 					<button appBtn disabled class="btn w-100 py-2" type="submit">Registrarse</button>
 				}

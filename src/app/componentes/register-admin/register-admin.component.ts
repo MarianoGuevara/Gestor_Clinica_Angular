@@ -10,6 +10,7 @@ import { IAdministrador } from '../../interfaces/interfaces';
 import { AdminService } from '../../servicios/admin.service';
 import { IUsuario } from '../../interfaces/interfaces';
 import { RegisterComponent } from '../register/register.component';
+import { CaptchaComponent } from '../captcha/captcha.component';
 
 @Component({
   selector: 'app-register-admin',
@@ -19,7 +20,8 @@ import { RegisterComponent } from '../register/register.component';
     FormsModule,
     ReactiveFormsModule,
     BtnDirective,
-	RegisterComponent
+	RegisterComponent,
+	CaptchaComponent
   ],
   templateUrl: './register-admin.component.html',
   styleUrl: './register-admin.component.css'
@@ -35,6 +37,7 @@ export class RegisterAdminComponent {
 	formActual:string = "admin";
 	userClonMail: string = "";
 	userClonPass: string = ""
+	captchaCompletado: boolean = false;
 
     constructor()
     {
@@ -75,6 +78,9 @@ export class RegisterAdminComponent {
         return null;
     }
 
+	enCaptchaCompletado(event:any) {
+		this.captchaCompletado = event;
+	}
 
     changeImg($event:any, imgAtr:number)
     {
@@ -86,98 +92,103 @@ export class RegisterAdminComponent {
 
     registrarse()
     {
-        this.loading.mostrarSpinner();
+		if (this.captchaCompletado) {
+			this.loading.mostrarSpinner();
 
-		this.userClonMail = this.auth.usuarioRealActual?.mail || "";
-		this.userClonPass = this.auth.usuarioRealActual?.password || "";
+			this.userClonMail = this.auth.usuarioRealActual?.mail || "";
+			this.userClonPass = this.auth.usuarioRealActual?.password || "";
 
-        const user: IUsuario = {
-            nombre: this.formGroupMio.get("nombre")?.value,
-            apellido: this.formGroupMio.get("apellido")?.value,
-            edad: this.formGroupMio.get("edad")?.value,
-            dni: this.formGroupMio.get("dni")?.value,
-            mail: this.formGroupMio.get("correo")?.value,
-            password: this.formGroupMio.get("clave")?.value,
-            imagenPerfil: this.formGroupMio.get("imagen")?.value,
-            rol: "", 
-            verificado: false,
-            id: ""
-        };
+			const user: IUsuario = {
+				nombre: this.formGroupMio.get("nombre")?.value,
+				apellido: this.formGroupMio.get("apellido")?.value,
+				edad: this.formGroupMio.get("edad")?.value,
+				dni: this.formGroupMio.get("dni")?.value,
+				mail: this.formGroupMio.get("correo")?.value,
+				password: this.formGroupMio.get("clave")?.value,
+				imagenPerfil: this.formGroupMio.get("imagen")?.value,
+				rol: "", 
+				verificado: false,
+				id: ""
+			};
 
 
-        this.auth.registarUsuario(user)
-        .then(() => {
-            this.loading.mostrarSpinner();
+			this.auth.registarUsuario(user)
+			.then(() => {
+				this.loading.mostrarSpinner();
 
-            const admin: IAdministrador = {
-                nombre: user.nombre,
-                apellido: user.apellido,
-                edad: user.edad,
-                dni: user.dni,
-                mail: user.mail,
-                password: user.password,
-                imagenPerfil: user.imagenPerfil,
-                rol: "administrador",
-                verificado: true,
-                id: "",
-            }
+				const admin: IAdministrador = {
+					nombre: user.nombre,
+					apellido: user.apellido,
+					edad: user.edad,
+					dni: user.dni,
+					mail: user.mail,
+					password: user.password,
+					imagenPerfil: user.imagenPerfil,
+					rol: "administrador",
+					verificado: true,
+					id: "",
+				}
 
-          
-             
-                
-            const name = admin.nombre + "-" + admin.mail + "-" +"foto1";
+			
+				
+					
+				const name = admin.nombre + "-" + admin.mail + "-" +"foto1";
 
-            this.adminservice.Alta(admin, this.img1!, name)
-            .then((id) => {
-                this.auth.logueado = true;
+				this.adminservice.Alta(admin, this.img1!, name)
+				.then((id) => {
+					this.auth.logueado = true;
 
-                if (id != "-1")
-                {
-                    admin.id = id;
-    
-					const user: IUsuario = {
-						nombre: "",
-						apellido: "",
-						edad: -1,
-						dni: -1,
-						mail: this.userClonMail,
-						password: this.userClonPass,
-						imagenPerfil: "",
-						rol: "", 
-						verificado: false,
-						id: ""
-					};
+					if (id != "-1")
+					{
+						admin.id = id;
+		
+						const user: IUsuario = {
+							nombre: "",
+							apellido: "",
+							edad: -1,
+							dni: -1,
+							mail: this.userClonMail,
+							password: this.userClonPass,
+							imagenPerfil: "",
+							rol: "", 
+							verificado: false,
+							id: ""
+						};
 
-					this.auth.loguearse(user);
+						this.auth.loguearse(user);
 
-					this.alert.Alerta("Exito", "Nuevo admin dado de alta con exito", 'success').then(()=>{
-						this.loading.ocultarSpinner();
-					});
-                }
-                else
-                {
-                    this.alert.Alerta("Fracaso", "Algo falló en el alta del admin", 'error');
-                }
-            })
-            .catch((error) => {
-                this.alert.Alerta("Fracaso", error.message, 'error');
-            })
-            .finally(() => {
-                this.loading.ocultarSpinner();
-            });
-           
-           
-            
+						this.alert.Alerta("Exito", "Nuevo admin dado de alta con exito", 'success').then(()=>{
+							this.loading.ocultarSpinner();
+						});
+					}
+					else
+					{
+						this.alert.Alerta("Fracaso", "Algo falló en el alta del admin", 'error');
+					}
+				})
+				.catch((error) => {
+					this.alert.Alerta("Fracaso", error.message, 'error');
+				})
+				.finally(() => {
+					this.loading.ocultarSpinner();
+				});
+			
+			
+				
 
-        })
-        .catch((error) => {
-            let msj = "";
-            if ((error as Error).message == 'Firebase: Error (auth/email-already-in-use).') msj = "El correo ingresado ya está en uso, pruebe con otro";
-            this.alert.Alerta("Fracaso", msj, 'error');
-        })
-        .finally(() => {
-            this.loading.ocultarSpinner();
-        });
+			})
+			.catch((error) => {
+				let msj = "";
+				if ((error as Error).message == 'Firebase: Error (auth/email-already-in-use).') msj = "El correo ingresado ya está en uso, pruebe con otro";
+				this.alert.Alerta("Fracaso", msj, 'error');
+			})
+			.finally(() => {
+				this.loading.ocultarSpinner();
+			});
+		}
+		else {
+            this.alert.Alerta("Fracaso!", "Aunque intentes ser admin. debes demostrar que no sos un robot antes de darte de alta!", 'error');
+		}
     }
 }
 

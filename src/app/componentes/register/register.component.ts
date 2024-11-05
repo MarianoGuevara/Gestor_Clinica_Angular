@@ -11,6 +11,7 @@ import { EspecialistasService } from '../../servicios/especialistas.service';
 import { IEspecialista, IPaciente } from '../../interfaces/interfaces'; 
 import { IAdministrador } from '../../interfaces/interfaces';
 import { IUsuario } from '../../interfaces/interfaces';
+import { CaptchaComponent } from "../captcha/captcha.component";
 
 @Component({
   selector: 'app-register',
@@ -19,8 +20,9 @@ import { IUsuario } from '../../interfaces/interfaces';
     RouterLink,
     FormsModule,
     ReactiveFormsModule,
-    BtnDirective
-  ],
+    BtnDirective,
+    CaptchaComponent
+],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
@@ -40,6 +42,7 @@ export class RegisterComponent {
     especialistasService = inject(EspecialistasService)
 	rolElegido:boolean = false;
 	@Input() admin: IAdministrador|null = null;
+	captchaCompleto: boolean = false;
 
     constructor(){
         this.formGroupMio = this.fb.group({ 
@@ -96,9 +99,10 @@ export class RegisterComponent {
 
     registrarse()
     {
-        this.loading.mostrarSpinner();
+		if (this.captchaCompleto) {
+			this.loading.mostrarSpinner();
 
-        const user: IUsuario = {
+			const user: IUsuario = {
             nombre: this.formGroupMio.get("nombre")?.value,
             apellido: this.formGroupMio.get("apellido")?.value,
             edad: this.formGroupMio.get("edad")?.value,
@@ -210,6 +214,11 @@ export class RegisterComponent {
         .finally(() => {
             this.loading.ocultarSpinner();
         });
+		}
+		else
+		{
+			this.alert.Alerta("Fracaso!", "Debes verificar que no eres un robot antes de registrarte", "error");
+		}
     }
 
     LlenarUsers(mail:string, pass:string)
@@ -276,4 +285,7 @@ export class RegisterComponent {
         }
     }
 
+	enCaptchaCompletado(completado: any) {
+		this.captchaCompleto = completado;
+	}
 }
