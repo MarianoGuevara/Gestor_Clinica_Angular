@@ -36,4 +36,11 @@ export class AdminService {
         const especialistaDocs = await getDocs(adminQuery);
         return especialistaDocs;
     }
+
+	async GetAdminsTotal()
+    {
+        const adminQuery = query(collection(this.firestore, 'administradores'));
+        const especialistaDocs = await getDocs(adminQuery);
+        return especialistaDocs;
+    }
 }

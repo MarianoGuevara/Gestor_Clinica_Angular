@@ -60,6 +60,12 @@ export class EspecialistasService {
         const especialistaDocs = await getDocs(especialistaQuery);
         return especialistaDocs;
     }
+    async GetEspecialistasTotal()
+    {
+        const especialistaQuery = query(collection(this.firestore, 'especialistas'));
+        const especialistaDocs = await getDocs(especialistaQuery);
+        return especialistaDocs;
+    }
 
     async actualizarEspecialista(especialista:IEspecialista)
     {

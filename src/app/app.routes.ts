@@ -29,5 +29,8 @@ export const routes: Routes = [
         path: 'alta-turno',
         loadComponent: ()=> import('./componentes/alta-turno/alta-turno.component').then(m => m.AltaTurnoComponent)
     },
-	
+	{
+        path: 'historias-clinicas',
+        loadComponent: ()=> import('./componentes/listado-hisotrias-clinicas/listado-hisotrias-clinicas.component').then(m => m.ListadoHisotriasClinicasComponent)
+    },
 ];

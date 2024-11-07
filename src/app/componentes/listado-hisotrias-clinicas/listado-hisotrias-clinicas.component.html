@@ -1,0 +1,32 @@
+@if (auth.usuarioRealActual?.rol == "administrador") {
+	<h3 class="text-center" style="margin-top: 30px;">Historias clínicas de la app, ADMIN '{{auth.usuarioRealActual?.apellido}}'</h3>
+} @else if (auth.usuarioRealActual?.rol == "especialista"){ 
+	<h3 class="text-center" style="margin-top: 30px;">Su historia clínica, ESPECIALISTA '{{auth.usuarioRealActual?.apellido}}'</h3>
+} @else {
+	<h3 class="text-center" style="margin-top: 30px;">Su historia clínica, PACIENTE '{{auth.usuarioRealActual?.apellido}}'</h3>
+}
+
+<div class="turnos-container">
+	@for (item of cardsHistoriaClinicas; track $index) {
+		<div class="turno-card">
+			<div class="turno-header">
+				<h4 style="margin-bottom: 10px;"><strong></strong></h4>
+				<p><strong>Especialidad: </strong>{{cardsHistoriaClinicas[$index].especialidad}}</p>
+				<p><strong>Especialista: </strong>{{cardsHistoriaClinicas[$index].especialistaNombre}}</p>
+				<p><strong>Paciente: </strong>{{cardsHistoriaClinicas[$index].pacienteNombre}}</p>
+				<p><strong>Fecha: </strong>{{cardsHistoriaClinicas[$index].fecha}} - {{cardsHistoriaClinicas[$index].horario}}</p>
+				<button (click)="pdf(cardsHistoriaClinicas[$index].id_historia)" appBtn btn="border" class="btn">PDF</button>
+			</div>
+			<div class="turno-body">
+				<p><strong>Altura: </strong>{{cardsHistoriaClinicas[$index].altura}}</p>
+				<p><strong>Peso: </strong>{{cardsHistoriaClinicas[$index].peso}}</p>
+				<p><strong>Temperatura: </strong>{{cardsHistoriaClinicas[$index].temperatura}}</p>
+				<p><strong>Presión: </strong>{{cardsHistoriaClinicas[$index].presion}}</p>
+				@if (cardsHistoriaClinicas[$index].dinamico1 != "") {<p><strong>Dinamico 1: </strong>{{cardsHistoriaClinicas[$index].dinamico1}}</p>}
+				@if (cardsHistoriaClinicas[$index].dinamico2 != "") {<p><strong>Dinamico 2: </strong>{{cardsHistoriaClinicas[$index].dinamico2}}</p>}
+				@if (cardsHistoriaClinicas[$index].dinamico3 != "") {<p><strong>Dinamico 3: </strong>{{cardsHistoriaClinicas[$index].dinamico3}}</p>}
+			</div>
+		</div>
+	}
+</div>
+	

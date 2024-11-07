@@ -1,4 +1,4 @@
-import { Component, Inject, inject  } from '@angular/core';
+import { Component, Inject, inject, ViewChild } from '@angular/core';
 import { IEspecialista, IPaciente, IUsuario } from '../../interfaces/interfaces';
 import { EspecialistasService } from '../../servicios/especialistas.service';
 import { PacientesService } from '../../servicios/pacientes.service';
@@ -8,13 +8,17 @@ import { BtnDirective } from '../../directivas/btn.directive';
 import { RegisterAdminComponent } from "../register-admin/register-admin.component";
 import { AuthService } from '../../servicios/auth.service';
 import { AlertService } from '../../servicios/alert.service';
+import { Router, RouterLink } from '@angular/router';
+import { GenerarExcelComponent } from "../generar-excel/generar-excel.component";
 
 @Component({
   selector: 'app-seccion-usuarios-admin',
   standalone: true,
   imports: [
     BtnDirective,
-    RegisterAdminComponent
+    RegisterAdminComponent,
+    RouterLink,
+    GenerarExcelComponent
 ],
   templateUrl: './seccion-usuarios-admin.component.html',
   styleUrl: './seccion-usuarios-admin.component.css'
@@ -30,6 +34,7 @@ export class SeccionUsuariosAdminComponent {
     loading = inject(LoadingService);
     auth = inject(AuthService);
     alert = inject(AlertService);
+	@ViewChild(GenerarExcelComponent) excelComponente!: GenerarExcelComponent;
 
     ngOnInit(): void {
         this.loading.mostrarSpinner();
@@ -143,4 +148,10 @@ export class SeccionUsuariosAdminComponent {
             }
         })
     }
+
+	async excel() {
+		this.loading.mostrarSpinner();
+		await this.excelComponente.exportToExcel();
+		this.loading.ocultarSpinner();
+	}
 }

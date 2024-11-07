@@ -15,6 +15,8 @@
 			@if (isPaciente(user.usuarioRealActual!)){
 				<img src="{{ user.usuarioRealActual.imagenPerfil2 }}" alt="Imagen 2" class="user-image">
 				<p><strong>Obra social:</strong> {{ user.usuarioRealActual.obraSocial }}</p>
+				<button appBtn class="btn" routerLink="/historias-clinicas">Historia Clínica</button>				
+
 			}
 			@else if (isEspecialista(user.usuarioRealActual!)){
 				<p><strong>Especialidades:</strong> {{ user.usuarioRealActual.especialidad }}</p>

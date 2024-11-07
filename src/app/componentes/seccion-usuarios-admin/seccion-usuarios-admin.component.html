@@ -1,5 +1,7 @@
 <div class="container">
     <div class="card-container">
+		<app-generar-excel (click)="excel()"></app-generar-excel>
+		<button appBtn class="btn" style="width: 100%; margin-top: 10px;" routerLink="/historias-clinicas">Historias Clínicas</button>
         @for (item of arrayUsuarios; track $index) 
         {
             <div class="card">

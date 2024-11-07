@@ -30,6 +30,16 @@ export class TurnosService {
         return observable;
     }
 
+	async GetTurnoId(id:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'turnos'),
+		    where('id', '==', id), 
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
     async GetTurnosEspecialistaId(idEspecialista:string)
     {
         const turnoQuery = query(

@@ -42,9 +42,23 @@ export class PacientesService {
         return observable;
     }
 
+	async GetPacientesTotal()
+    {
+        const pacienteQuery = query(collection(this.firestore, 'pacientes'));
+        const especialistaDocs = await getDocs(pacienteQuery);
+        return especialistaDocs;
+    }
+
     async GetPaciente(email:string)
     {
         const pacienteQuery = query(collection(this.firestore, 'pacientes'), where('mail', '==', email));
+        const especialistaDocs = await getDocs(pacienteQuery);
+        return especialistaDocs;
+    }
+
+	async GetPacienteId(id:string)
+    {
+        const pacienteQuery = query(collection(this.firestore, 'pacientes'), where('id', '==', id));
         const especialistaDocs = await getDocs(pacienteQuery);
         return especialistaDocs;
     }

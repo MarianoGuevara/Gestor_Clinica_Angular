@@ -7,11 +7,15 @@ import { BtnDirective } from '../../directivas/btn.directive';
 import { HorariosService } from '../../servicios/horarios.service';
 import { LoadingService } from '../../servicios/loading.service';
 import { AlertService } from '../../servicios/alert.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-mi-perfil',
   standalone: true,
-  imports: [BtnDirective],
+  imports: [
+	BtnDirective,
+	RouterLink
+  ],
   templateUrl: './mi-perfil.component.html',
   styleUrl: './mi-perfil.component.css'
 })

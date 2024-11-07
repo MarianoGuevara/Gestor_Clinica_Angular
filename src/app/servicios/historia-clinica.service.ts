@@ -28,4 +28,43 @@ export class HistoriaClinicaService {
     
         return observable;
     }
+
+    async GetHistoriasPaciente(idPaciente:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'hisotriasClinicas'),
+		    where('idPaciente', '==', idPaciente), 
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
+	async GetHistoriasEspecialista(idEspecialista:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'hisotriasClinicas'),
+		    where('idEspecialista', '==', idEspecialista), 
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
+	async GetHistorias()
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'hisotriasClinicas')
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
+	async GetHistoriaId(id:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'hisotriasClinicas'),
+		    where('id', '==', id), 
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
 }

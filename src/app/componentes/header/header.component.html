@@ -29,6 +29,10 @@
 					{
 						<li class="nav-link px-2 text-white option" routerLink="/alta-turno">Solicitar turno</li>
 					}
+
+					@if (auth.determinarTipoUsuario() == "especialista") {
+						<li class="nav-link px-2 text-white option" routerLink="/historias-clinicas">Pacientes</li>
+					}
 				}
             }          
         </ul>
