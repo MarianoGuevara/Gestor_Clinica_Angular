@@ -1,5 +1,5 @@
 import { Component, inject, ViewChild, ElementRef } from '@angular/core';
-import { ITurno } from '../../interfaces/interfaces';
+import { IHistoriaClinica, ITurno } from '../../interfaces/interfaces';
 import { TurnosService } from '../../servicios/turnos.service';
 import { LoadingService } from '../../servicios/loading.service';
 import { AuthService } from '../../servicios/auth.service';
@@ -9,16 +9,18 @@ import { EspecialistasService } from '../../servicios/especialistas.service';
 import { PacientesService } from '../../servicios/pacientes.service';
 import { IEspecialista } from '../../interfaces/interfaces';
 import { IPaciente } from '../../interfaces/interfaces';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Modal } from 'bootstrap'; 
 import { HorariosService } from '../../servicios/horarios.service';
+import { HistoriaClinicaService } from '../../servicios/historia-clinica.service';
 
 @Component({
   selector: 'app-pacientes-turnos',
   standalone: true,
   imports: [
 	BtnDirective,
-	FormsModule
+	FormsModule,
+    ReactiveFormsModule,
   ],
   templateUrl: './pacientes-turnos.component.html',
   styleUrl: './pacientes-turnos.component.css'
@@ -29,23 +31,45 @@ export class PacientesTurnosComponent {
 	turnosService = inject(TurnosService);
 	loading = inject(LoadingService);
 	auth = inject(AuthService);
+	historiasClinicasService = inject(HistoriaClinicaService);
 	suscripcion: Subscription|null = null;
 	horariosService = inject(HorariosService);
 	especialistasService = inject(EspecialistasService);
 	pacientesService = inject(PacientesService);
+
 	arrayParaleloEspecialitas :IEspecialista[] = [];
 	filtroActual:string = "";
 	@ViewChild('modalCancelar') modalCancelar!: ElementRef;
 	accionParaModal:string = "";
 	modalInput1:string = "";
 	modalInput2:string = "";
+	modalInputAltura:string = "";
+	modalInputPeso:string = "";
+	modalInputTemperatura:string = "";
+	modalInputPresion:string = "";
+	modalInputDinamico1:string = "";
+	modalInputDinamico2:string = "";
+	modalInputDinamico3:string = "";
+
 	modalOutput1:string = "";
 	modalOutput2:string = "";
 	accionBotonModal:string = "";
 	turnoTocadoActual: ITurno|null = null;
-
+	fb = inject(FormBuilder);
+	formGroupHistoriaClinica: FormGroup;
 
 	constructor() {
+		this.formGroupHistoriaClinica = this.fb.group({ 
+            altura: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(75), Validators.max(275)]], 
+            peso: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(550)]],
+            temperatura: ["", [Validators.required, Validators.pattern(/^\d+$/), Validators.min(20), Validators.max(60)]],
+            presion: ["", [Validators.required, Validators.min(70), Validators.max(140)]],
+            dinamico1: ["", [Validators.pattern(/^[\w\s]+,[\w]+$/)]], // cualquier letra y num
+            dinamico2: ["", [Validators.pattern(/^[\w\s]+,[\w]+$/)]], // cualquier letra y num
+            dinamico3: ["", [Validators.pattern(/^[\w\s]+,[\w]+$/)]], // cualquier letra y num
+        });
+
+
 		this.loading.mostrarSpinner();
 
 		this.turnosService.GetTurnos().subscribe({
@@ -119,77 +143,87 @@ export class PacientesTurnosComponent {
 		});
 	}
 
-	async accionModal(id:string, turnoTocado:ITurno|null=null, accion:string ="abrir") {
-		if (id != "") {this.accionParaModal = id;} // esto es para el ngIf del html
+	async accionModal(id:string, turnoTocado:ITurno|null=null, accion:string ="abrir", cancelar:string = "no") {
 		const modalElement = this.modalCancelar.nativeElement;
-		console.log(turnoTocado?.estado);
-
-		if (accion == "cerrar") { // si lo llama un boton de la card accion va a ser "abrir"
-			// cuando lo voy a cerrar nada primero lo cierro con el boton. 
-			this.abrirCerrarModal(accion,modalElement); 
-			
-			// hago un switch de id; variable que capturé en cuando lo abrí al modal
-			// segun sea la acción, llamará a un método u otro... Segun 
-			switch (this.accionBotonModal) {
-				case 'cancelar':
-					console.log(this.modalInput1);
-					if (this.auth.usuarioRealActual?.rol == "paciente") {
-						await this.cancelarTurnoPaciente(this.turnoTocadoActual!, this.modalInput1);
-					}
-					else if (this.auth.usuarioRealActual?.rol == "especialista") {
-						await this.cancelarTurnoEspecialista(this.turnoTocadoActual!, this.modalInput1);
-					}
-					else {
-						await this.cancelarTurnoAdministrador(this.turnoTocadoActual!, this.modalInput1);
-					}
-					
-					this.abrirCerrarModal(accion,modalElement);
-					console.log('Cancelando turno como cliente');
-					break;
-				case 'aceptar-especialista':
-					console.log('Evito que vaya al default');
-					break;
-				case 'finalizar':
-					await this.finalizarEspecialista(this.turnoTocadoActual!, this.modalInput1);
-					this.abrirCerrarModal(accion,modalElement);
-					break;
-				case 'rechazar-especialista':
-					this.abrirCerrarModal(accion,modalElement);
-					break;
-				case 'encuesta-paciente':
-					await this.encuestaPaciente(this.turnoTocadoActual!, this.modalInput1, this.modalInput2);
-					this.abrirCerrarModal(accion,modalElement);
-					break;
-					
-				default:
-					this.abrirCerrarModal(accion,modalElement);
-					break;
-			}
-		} else{
-			// aca entra cuando lo toca un boton de la card turno. id == "" y accion == "abrir"
-			// cuando lo abro lo único que hago es guardarme en una variable de .ts el id.
-			this.accionBotonModal = id;
-			this.turnoTocadoActual = turnoTocado;
-			console.log(this.accionBotonModal);
-
-			// hay acciones de los turnos que no necesitan que se abra el modal como un especialista aceptando turno			
-			switch (this.accionBotonModal) 
-			{
-				case 'vercomentario':
-					this.verComentario(this.turnoTocadoActual!);
-					this.abrirCerrarModal(accion,modalElement); 
-					break;
-				case "aceptar-especialista":
-					await this.aceptarEspecialista(this.turnoTocadoActual!);
-					break;
-				case "cancelar":
-				case "finalizar":
-				case 'encuesta-paciente':
-					this.abrirCerrarModal(accion,modalElement); 
-					break;
-			}
-			
+		if (cancelar != "no") {
+			this.abrirCerrarModal("cerrar",modalElement); 
 		}
+		else {
+			if (id != "") {this.accionParaModal = id;} // esto es para el ngIf del html
+
+
+
+			if (accion == "cerrar") { // si lo llama un boton de la card accion va a ser "abrir"
+				// cuando lo voy a cerrar nada primero lo cierro con el boton. 
+				this.abrirCerrarModal(accion,modalElement); 
+				
+				// hago un switch de id; variable que capturé en cuando lo abrí al modal
+				// segun sea la acción, llamará a un método u otro... Segun 
+				switch (this.accionBotonModal) {
+					case 'cancelar':
+						console.log(this.modalInput1);
+						if (this.auth.usuarioRealActual?.rol == "paciente") {
+							await this.cancelarTurnoPaciente(this.turnoTocadoActual!, this.modalInput1);
+						}
+						else if (this.auth.usuarioRealActual?.rol == "especialista") {
+							await this.cancelarTurnoEspecialista(this.turnoTocadoActual!, this.modalInput1);
+						}
+						else {
+							await this.cancelarTurnoAdministrador(this.turnoTocadoActual!, this.modalInput1);
+						}
+						
+						this.abrirCerrarModal(accion,modalElement);
+						console.log('Cancelando turno como cliente');
+						break;
+					case 'aceptar-especialista':
+						console.log('Evito que vaya al default');
+						break;
+					case 'finalizar':
+						this.loading.mostrarSpinner();
+						await this.subirHistoriaClinica();
+						await this.finalizarEspecialista(this.turnoTocadoActual!, this.modalInput1);
+						this.abrirCerrarModal(accion,modalElement);
+						this.loading.ocultarSpinner();
+						break;
+					case 'rechazar-especialista':
+						this.abrirCerrarModal(accion,modalElement);
+						break;
+					case 'encuesta-paciente':
+						await this.encuestaPaciente(this.turnoTocadoActual!, this.modalInput1, this.modalInput2);
+						this.abrirCerrarModal(accion,modalElement);
+						break;
+						
+					default:
+						this.abrirCerrarModal(accion,modalElement);
+						break;
+				}
+			} else{
+				// aca entra cuando lo toca un boton de la card turno. id == "" y accion == "abrir"
+				// cuando lo abro lo único que hago es guardarme en una variable de .ts el id.
+				this.accionBotonModal = id;
+				this.turnoTocadoActual = turnoTocado;
+				console.log(this.accionBotonModal);
+
+				// hay acciones de los turnos que no necesitan que se abra el modal como un especialista aceptando turno			
+				switch (this.accionBotonModal) 
+				{
+					case 'vercomentario':
+						this.verComentario(this.turnoTocadoActual!);
+						this.abrirCerrarModal(accion,modalElement); 
+						break;
+					case "aceptar-especialista":
+						await this.aceptarEspecialista(this.turnoTocadoActual!);
+						break;
+					case "cancelar":
+					case 'encuesta-paciente':
+					case "finalizar":
+						this.abrirCerrarModal(accion,modalElement); 
+						break;
+				}
+				
+			}
+		}
+		
 	}
 
 	async cancelarTurnoPaciente(turno: ITurno, comentario:string) {
@@ -258,4 +292,58 @@ export class PacientesTurnosComponent {
 	ngOnDestroy(): void {
 		if (this.suscripcion) {this.suscripcion.unsubscribe();}
 	}
+
+	async subirHistoriaClinica() {
+		const turno = this.turnoTocadoActual as ITurno;
+	
+		const historiaClinica: IHistoriaClinica = {
+			id: "",
+			idPaciente: turno.pacienteId,
+			idEspecialista: turno.especialistaId,
+			idTurno: turno.id,
+			altura: parseInt(this.formGroupHistoriaClinica.get("altura")?.value),
+			peso: parseInt(this.formGroupHistoriaClinica.get("peso")?.value),
+			temperatura: parseInt(this.formGroupHistoriaClinica.get("temperatura")?.value),
+			presion: parseInt(this.formGroupHistoriaClinica.get("presion")?.value),
+			dinamico1: this.formGroupHistoriaClinica.get("dinamico1")?.value,
+			dinamico2: this.formGroupHistoriaClinica.get("dinamico2")?.value,
+			dinamico3: this.formGroupHistoriaClinica.get("dinamico3")?.value,
+		}
+
+		await this.historiasClinicasService.Alta(historiaClinica);
+		console.log(historiaClinica);
+	}
+
+	obtenerMensajeError(campo: string, formGroup:string){
+        let control:any = "";
+        if (formGroup == "historia"){control = this.formGroupHistoriaClinica.get(campo);}
+        // else if (formGroup == "paciente"){control = this.formPaciente.get(campo);}
+        // else if (formGroup == "especialista"){ control = this.formEspecialista.get(campo);}
+
+        if (control?.errors) {
+          if (control.errors['required']) {
+            return  "'"+campo +"'" + ' es obligatorio.';
+          } else if (control.errors['minlength']) {
+            return `Cantidad de caracteres inválida (mínimo ${control.errors['minlength'].requiredLength}).`;
+          } else if (control.errors['maxlength']) {
+            return `Cantidad de caracteres inválida (máximo ${control.errors['maxlength'].requiredLength}).`;
+          } else if (control.errors['pattern']) {
+			if (campo == "dinamico1" || campo == "dinamico2" || campo == "dinamico3") {
+				return 'El formato no es válido. Deberia ser "xxx,xxx" (key value separado por ",")';
+			} else {
+				return 'El formato no es válido. Deberia ser numérico entero';
+			}
+            
+          } else if (control.errors['min']) {
+            return `El valor mínimo es ${control.errors['min'].min}.`;
+          } else if (control.errors['max']) {
+            return `El valor máximo es ${control.errors['max'].max}.`;
+          } else if (control.errors!['email']) {
+            return "El email está en formato invalido";
+          }
+          
+          
+        }
+        return null;
+      }
 }

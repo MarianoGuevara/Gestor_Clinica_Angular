@@ -46,6 +46,14 @@ export class EspecialistasService {
         return especialistaDocs;
     }
 	
+	async GetEspecialistaNombreApellido(nombre:string, apellido:string)
+    {
+        const especialistaQuery = query(collection(this.firestore, 'especialistas'), 
+		where('nombre', '==', nombre), where('apellido', '==', apellido));
+        const especialistaDocs = await getDocs(especialistaQuery);
+        return especialistaDocs;
+    }
+
     async GetEspecialista(email:string)
     {
         const especialistaQuery = query(collection(this.firestore, 'especialistas'), where('mail', '==', email));
@@ -76,4 +84,11 @@ export class EspecialistasService {
         }
         catch {return false;}
     }
+
+	// 
+	async obtenerEspecialidadDetalles(especialidad:string) {
+		const especialidadQuery = query(collection(this.firestore, 'especialidades'), where('nombre', '==', especialidad));
+        const especialidadDocs = await getDocs(especialidadQuery);
+        return especialidadDocs;
+	}
 }

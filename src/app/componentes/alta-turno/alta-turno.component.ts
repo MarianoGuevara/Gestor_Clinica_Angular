@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../../servicios/auth.service';
 import { EspecialistasService } from '../../servicios/especialistas.service';
 import { Subscription } from 'rxjs';
-import { IEspecialista, IPaciente, ITurno } from '../../interfaces/interfaces';
+import { IEspecialidad, IEspecialista, IPaciente, ITurno } from '../../interfaces/interfaces';
 import { LoadingService } from '../../servicios/loading.service';
 import { BtnDirective } from '../../directivas/btn.directive';
 import { HorariosService } from '../../servicios/horarios.service';
@@ -28,7 +28,9 @@ export class AltaTurnoComponent {
 	subscription2: Subscription|null = null;
 	arrayPacientes: IPaciente[] = [];
 	arrayEspecialistas: IEspecialista[] = [];
-	arrayEspecialidades: string[] = [];
+	arrayEspecialidadesValidas: IEspecialidad[] = [];
+	especialistaNombre: string = "";
+	especialistaApellido: string = "";
 	loading = inject(LoadingService);
 	horariosService = inject(HorariosService);
 	pacienteSeleccionado: boolean = false;
@@ -55,6 +57,7 @@ export class AltaTurnoComponent {
 		completado_paciente_encuesta: "",
 		completado_paciente_atencion: "",
 	}
+	horariosVisibles: boolean[] = [];
 
 	constructor(){
 		this.loading.mostrarSpinner();
@@ -63,7 +66,6 @@ export class AltaTurnoComponent {
                 next: (rta: any[]) => {
                     console.log(rta);  
                     this.arrayEspecialistas = [];
-					this.arrayEspecialidades = [];
 
                     rta.forEach((element) => {
                         this.arrayEspecialistas.push(
@@ -83,18 +85,20 @@ export class AltaTurnoComponent {
                             
                         );
                     });
-					for (let i=0; i<this.arrayEspecialistas.length; i++)
-					{
-						for (let j=0; j<this.arrayEspecialistas[i].especialidad.length; j++)
-						{
-							this.arrayEspecialidades.push(this.arrayEspecialistas[i].especialidad[j]);
-						}
-					}
 
-					console.log(this.arrayEspecialidades);
-					this.arrayEspecialidades = Array.from(new Set(this.arrayEspecialidades))
-					console.log("ESPECIALIDADES SET");
-					console.log(this.arrayEspecialidades);
+					// ESTO ME CONSIGUE TODAS LAS ESPECIALIDADES... YA NO LO NECESITO PERO X LAS DUDAS...
+					// for (let i=0; i<this.arrayEspecialistas.length; i++)
+					// {
+					// 	for (let j=0; j<this.arrayEspecialistas[i].especialidad.length; j++)
+					// 	{
+					// 		this.arrayEspecialidades.push(this.arrayEspecialistas[i].especialidad[j]);
+					// 	}
+					// }
+
+					// console.log(this.arrayEspecialidades);
+					// this.arrayEspecialidades = Array.from(new Set(this.arrayEspecialidades))
+					// console.log("ESPECIALIDADES SET");
+					// console.log(this.arrayEspecialidades);
 
 					this.subscription.unsubscribe();
 					this.loading.ocultarSpinner();
@@ -162,14 +166,15 @@ export class AltaTurnoComponent {
 		this.turno.pacienteNombreApellido = paciente.nombre + " " + paciente.apellido;
 	}
 
-	solicitarEspecilidad(selected: string) {
+	seleccionarEspecialidad(especialidad: IEspecialidad) {
+		console.log(especialidad);
 		this.especialidadSelected = true;
-		this.turno.especialidad = selected 
+		this.turno.especialidad = especialidad.nombre 
 		if (this.auth.usuarioRealActual?.rol != "administrador") {
 			this.turno.pacienteId = this.auth.usuarioRealActual?.id || "";
 			this.turno.pacienteNombreApellido = this.auth.usuarioRealActual?.nombre + " " + this.auth.usuarioRealActual?.apellido;
 		}
-		
+		this.traerFechasDisponibles();
 	}
 
 	mostrarEspecialistas(especialidadSeleccionada:string)
@@ -192,11 +197,30 @@ export class AltaTurnoComponent {
 		return arrayEspecialistasValidos;
 	}
 	
-	solicitarEspecilista(id: string, nombre:string, apellido:string) {
+	async solicitarEspecilista(id: string, nombre:string, apellido:string) {
+		this.loading.mostrarSpinner();
 		this.especialistaSelected = true;
 		this.turno.especialistaId = id;
 		this.turno.especialistaNombreApellido = nombre + " " + apellido;
-		this.traerFechasDisponibles();
+
+
+		const especialidadesValidas = await this.traerEspecialidades(nombre,apellido);
+
+		this.arrayEspecialidadesValidas = [];
+		especialidadesValidas.forEach(async (especialidad) => {
+			const especialidadActualDb = await this.especialistasService.obtenerEspecialidadDetalles(especialidad);
+			const especialidadActual = especialidadActualDb.docs[0].data() as IEspecialidad;
+			this.arrayEspecialidadesValidas.push(especialidadActual);
+		})
+		this.loading.ocultarSpinner();
+		// this.traerFechasDisponibles();
+	}
+
+	async traerEspecialidades(nombreEspecialista:string, apellidoEspecialista:string) {
+		const especialistaDb = await this.especialistasService.GetEspecialistaNombreApellido(nombreEspecialista,apellidoEspecialista);
+		const especialista = especialistaDb.docs[0].data() as IEspecialista; 
+
+		return especialista.especialidad;
 	}
 
 	async traerFechasDisponibles()
@@ -283,39 +307,58 @@ export class AltaTurnoComponent {
 	
 		this.horariosDisponibles = fechasDisponibles;
 		console.log("HORARIOS DISPONIBLES -> ", this.horariosDisponibles);
+
 		const rta = await this.obtenerTurnosEspecialistaOcupado(this.turno.especialistaId);
 		console.log(rta);
 		this.extraerTurnosEspecificos(this.horariosDisponibles, rta);
 		console.log("HORARIOS DISPONIBLES LAST-> ", this.horariosDisponibles);
-		
+
+		this.horariosVisibles = new Array(this.horariosDisponibles.length).fill(false); // array de booleanos
+
 		this.loading.ocultarSpinner();
 		return fechasDisponibles;
 	}
 	
-	seleccionarHorario(fecha:string, horario:string)
+	seleccionarDia(index: number): void {
+		console.log(index);
+        this.horariosVisibles[index] = !this.horariosVisibles[index];
+    }
+
+	async seleccionarHorario(index:number, fecha:string, horario:string)
 	{
+		console.log(this.horariosDisponibles);
+		console.log(index);
+		console.log(fecha);
+		console.log(horario);
 		this.loading.mostrarSpinner();
 		this.fechaSelected = true;
 		this.turno.fecha = fecha;
 		this.turno.horario = horario;
 		this.turno.estado = "Pendiente de aprobacion";
-		
-		this.turnosService.Alta(this.turno)
-		.then((rta) => {
-			this.turno.id = rta;
 
-			// SACAR AL ARRAY DE DISPONIBLES EN PROX TURNO EL HORARIO EXACTO DEL DIA Y FECHA DE ESTE TURNO (NO DIA EN GENERAL SINOO EL ESPECIFICO)
-			// HABRIA Q TRAER CON GET LOS TURNOS DEL ESPECIALISTA Y ELIMINAR DE TURNOS DISPONIBLES DEL DIA ESPECIFICO EL TURNO EXACTO
-			
-			this.alertaService.Alerta("El turno fue pedido con exito", "Truno exitoso", 'success', true, "/bienvenida");
-		})
-		.catch((error) => {
-			this.alertaService.Alerta("Fracaso en el alta", error.message, 'error');
-		})
-		.finally(() => {
+		const turnoDisponibleEndDb = await this.turnosService.GetTurnosHorario(horario, fecha);
+		try {
+			const turnoDisponibleEndReal = turnoDisponibleEndDb.docs[0].data() as ITurno;
 			this.loading.ocultarSpinner();
-		});
-		console.log(this.turno);
+			this.alertaService.Alerta("Fracaso en el alta", "El horario del turno ya esta ocupado", 'error', true, "/bienvenida");
+		} catch {
+			this.turnosService.Alta(this.turno)
+				.then((rta) => {
+					this.turno.id = rta;
+
+				 	// SACAR AL ARRAY DE DISPONIBLES EN PROX TURNO EL HORARIO EXACTO DEL DIA Y FECHA DE ESTE TURNO (NO DIA EN GENERAL SINOO EL ESPECIFICO)
+				 	// HABRIA Q TRAER CON GET LOS TURNOS DEL ESPECIALISTA Y ELIMINAR DE TURNOS DISPONIBLES DEL DIA ESPECIFICO EL TURNO EXACTO
+					
+					this.alertaService.Alerta("El turno fue pedido con exito", "Truno exitoso", 'success', true, "/bienvenida");
+				})
+				.catch((error) => {
+					this.alertaService.Alerta("Fracaso en el alta", error.message, 'error');
+				})
+				.finally(() => {
+					this.loading.ocultarSpinner();
+				});
+				console.log(this.turno);
+		}	
 	}
 
 	async obtenerTurnosEspecialistaOcupado(especialistaId:string){
@@ -346,6 +389,19 @@ export class AltaTurnoComponent {
 				}
 			}
 		}
+	}
+
+	devolverASeleccionPaciente() {
+		if (this.auth.usuarioRealActual?.rol == 'administrador') {
+			this.pacienteSeleccionado = false;
+			
+		}
+	}
+	devolverASeleccionEspecialista() {
+		this.especialistaSelected = false;
+	}
+	devolverASeleccionEspecialidad() {
+		this.especialidadSelected = false;
 	}
 
 	ngOnDestroy(): void {

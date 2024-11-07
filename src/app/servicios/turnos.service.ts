@@ -35,11 +35,22 @@ export class TurnosService {
         const turnoQuery = query(
 			collection(this.firestore, 'turnos'),
 		    where('especialistaId', '==', idEspecialista), 
-			where('estado', '==', 'Aceptado')
 		);
         const especialistaDocs = await getDocs(turnoQuery);
         return especialistaDocs;
     }
+
+	async GetTurnosHorario(horario:string, fecha:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'turnos'),
+		    where('horario', '==', horario), 
+			where('fecha', '==', fecha)
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
 
 	async actualizarTurno(turno:ITurno)
     {

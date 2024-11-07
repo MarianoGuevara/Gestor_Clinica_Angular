@@ -78,7 +78,8 @@
     <div class="modal-dialog modal-dialog-centered mx-auto" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalTitle">Sobre el turno...</h5>
+                <h5 class="modal-title" id="modalTitle" style="margin-right: 10px;">Sobre el turno...</h5>
+				<button appBtn btn="border" (click)="accionModal('', null, 'cerrar', 'cancelar')" class="btn w-20 py-2" type="submit">Cancelar</button>
             </div>
             <div class="modal-body">
                 <div class="input-container">
@@ -97,15 +98,46 @@
                         }
                         @else if (accionBotonModal == "finalizar") {
                             <input type="text" [(ngModel)]="modalInput1" placeholder="Deje su reseña/diagnóstico" class="filtro-input">
-							<button type="button" (click)="accionModal('', null, 'cerrar')" appBtn btn="border" class="btn btn-primary">Subir reseña</button>
+
+							<p>Para la historia clínica del turno...</p>
+
+							<form class="input-and-button" [formGroup]="formGroupHistoriaClinica">
+								<input type="text" formControlName="altura" placeholder="Altura" class="filtro-input">
+								@if (formGroupHistoriaClinica.controls["altura"].touched && obtenerMensajeError("altura", "historia") != null){
+									<p style="color: rgb(255, 95, 95);">{{obtenerMensajeError("altura", "historia")}}</p>
+								}
+								<input type="text" formControlName="peso" placeholder="Peso" class="filtro-input">
+								@if (formGroupHistoriaClinica.controls["peso"].touched && obtenerMensajeError("peso", "historia") != null){
+									<p style="color: rgb(255, 95, 95);">{{obtenerMensajeError("peso", "historia")}}</p>
+								}
+								<input type="text" formControlName="temperatura" placeholder="Temperatura" class="filtro-input">
+								@if (formGroupHistoriaClinica.controls["temperatura"].touched && obtenerMensajeError("temperatura", "historia") != null){
+									<p style="color: rgb(255, 95, 95);">{{obtenerMensajeError("temperatura", "historia")}}</p>
+								}
+								<input type="text" formControlName="presion" placeholder="Presión" class="filtro-input">
+								@if (formGroupHistoriaClinica.controls["presion"].touched && obtenerMensajeError("presion", "historia") != null){
+									<p style="color: rgb(255, 95, 95);">{{obtenerMensajeError("presion", "historia")}}</p>
+								}
+								<input type="text" formControlName="dinamico1" placeholder="Clave valor opcional 1" class="filtro-input">
+								@if (formGroupHistoriaClinica.controls["dinamico1"].touched && obtenerMensajeError("dinamico1", "historia") != null){
+									<p style="color: rgb(255, 95, 95);">{{obtenerMensajeError("dinamico1", "historia")}}</p>
+								}
+								<input type="text" formControlName="dinamico2" placeholder="Clave valor opcional 2" class="filtro-input">
+								@if (formGroupHistoriaClinica.controls["dinamico2"].touched && obtenerMensajeError("dinamico2", "historia") != null){
+									<p style="color: rgb(255, 95, 95);">{{obtenerMensajeError("dinamico2", "historia")}}</p>
+								}
+								<input type="text" formControlName="dinamico3" placeholder="Clave valor opcional 3" class="filtro-input" style="margin-bottom: 15px;">
+								@if (formGroupHistoriaClinica.controls["dinamico3"].touched && obtenerMensajeError("dinamico3", "historia") != null){
+									<p style="color: rgb(255, 95, 95);">{{obtenerMensajeError("dinamico3", "historia")}}</p>
+								}
+								<button [disabled]="!formGroupHistoriaClinica.valid" type="button" (click)="accionModal('', null, 'cerrar')" appBtn btn="border" class="btn btn-primary">Subir reseña</button>
+							</form>
                         }
 						@else if (accionBotonModal == "encuesta-paciente") {
                             <input type="text" [(ngModel)]="modalInput1" placeholder="Deje su comentario sobre el turno en general" class="filtro-input">
 							<input type="text" [(ngModel)]="modalInput2" placeholder="¿Cómo fue la atención del especialista?" class="filtro-input">
 							<button type="button" (click)="accionModal('', null, 'cerrar')" appBtn btn="border" class="btn btn-primary">Subir encuesta</button>
                         }
-						
-
                     </div>
                 </div>
             </div>

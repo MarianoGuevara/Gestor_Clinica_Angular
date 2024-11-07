@@ -53,3 +53,24 @@ export interface IHorariosEspecialista {
 	viernes: string[];
 	sabado: string[];
 }
+
+export interface IHistoriaClinica {
+	id: string;
+	idPaciente: string;
+	idEspecialista: string;
+	idTurno: string;
+	altura: number;
+	peso: number;
+	temperatura: number;
+	presion: number;
+	dinamico1?: string;
+	dinamico2?: string;
+	dinamico3?: string;
+}
+
+
+export interface IEspecialidad {
+	id: string;
+	nombre: string;
+	foto: string;
+}

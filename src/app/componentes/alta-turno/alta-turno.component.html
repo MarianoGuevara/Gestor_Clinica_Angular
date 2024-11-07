@@ -12,33 +12,71 @@
 					<br>
 				}
 			}
-			@else if (!especialidadSelected) 
-			{
-				<h4>¿Sobre qué especialidad médica desea sacas un turno?</h4>
-				<br>
-				@for (item of arrayEspecialidades; track $index) {
-					<button appBtn class="btn" (click)="solicitarEspecilidad(arrayEspecialidades[$index])">{{arrayEspecialidades[$index]}}</button>
-					<br>
+			@else if (!especialistaSelected){
+				@if (this.auth.usuarioRealActual?.rol == 'administrador') {
+					<button appBtn btn="border" (click)="devolverASeleccionPaciente()" class="btnBack justify-content-center align-items-center" style="width: 100px;">BACK</button>	
 				}
-			}
-			@else if (especialidadSelected && !especialistaSelected){
+				
 				<h4>¿Qué especialista de tu confianza deseas que se encargue de tu turno?</h4>
 				<br>
-				@for (item of mostrarEspecialistas(turno.especialidad); track item) { 
-					<button appBtn class="btn" (click)="solicitarEspecilista(item.id, item.nombre, item.apellido)">{{item.nombre}} {{item.apellido}}</button>
+				@for (item of arrayEspecialistas; track item) { 
+					
+					<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; align-content: center;">
+						<button class="rounded-button" (click)="solicitarEspecilista(item.id, item.nombre, item.apellido)">
+							<img [src]="item.imagenPerfil" width="50px" height="50px" alt="Especialista">
+						</button>
+					</div>
+					
 					<br>
 				}
 			}
-			@else if (especialistaSelected && !fechaSelected){
+			@else if (especialistaSelected && !especialidadSelected) 
+			{
+				<button (click)="devolverASeleccionEspecialista()" appBtn btn="border" class="btnBack justify-content-center align-items-center" style="width: 100px;">BACK</button>
+				<h4>¿Sobre qué especialidad médica desea sacas un turno?</h4>
+				<br>
+				@for (item of arrayEspecialidadesValidas; track $index) {
+					<button appBtn class="btn" (click)="seleccionarEspecialidad(arrayEspecialidadesValidas[$index])">
+						<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; align-content: center;">
+							<img src="{{arrayEspecialidadesValidas[$index].foto}}" width="50px" height="auto">
+							<p style="margin: 0;">{{arrayEspecialidadesValidas[$index].nombre}}</p>
+							
+						</div>
+						
+					</button>
+					<br>
+				}
+			}
+			
+			@else if (especialidadSelected && !fechaSelected){
+				<button (click)="devolverASeleccionEspecialidad()" appBtn btn="border" class="btnBack justify-content-center align-items-center" style="width: 100px;">BACK</button>
 				<h4>¿Qué horario prefieres para tu turno?</h4>
 				<br>
 	
-				@for (item of horariosDisponibles; track item) { 
-					<p >{{item["fecha"]}}</p>
+				@for (item of horariosDisponibles; track $index) { 
+					<button (click)="seleccionarDia($index)" class="btn">
+						{{ horariosDisponibles[$index].fecha }}
+					</button>
+
+					@if (horariosVisibles[$index]) {
+						<div>
+							@for (horario of horariosDisponibles[$index].horarios; track horario) {
+								<button 
+									(click)="seleccionarHorario($index, item.fecha, horario)"
+									appBtn 
+									class="btn" 
+									style="margin: 10px;">
+									{{ horario }}
+								</button>
+							}
+						</div>
+					}
+
+					<!-- <p >{{item["fecha"]}}</p>
 					@for (fecha of item["horarios"]; track fecha) 
 					{
 						<button (click)="seleccionarHorario(item['fecha'], fecha)" appBtn class="btn" style="margin-bottom: 3px;">{{fecha}}</button>
-					}
+					} -->
 					<br>
 				}
 			}

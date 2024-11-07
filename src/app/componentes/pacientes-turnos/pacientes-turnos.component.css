@@ -58,11 +58,10 @@
     margin-bottom: 20px;
 }
 
-.input-and-button {  /* Nuevo estilo para el contenedor del input y el botón */
+.input-and-button {
     display: flex;
-    flex-direction: column;  /* Asegura que el botón esté debajo del input */
-    align-items: center;      /* Opcional: centra el contenido horizontalmente */
-    width: 100%;              /* Asegúrate de que ocupe todo el ancho disponible */
+    flex-direction: column;
+    align-items: center;
 }
 
 .filtro-input {
@@ -73,4 +72,5 @@
     border-radius: 5px;
     border: 1px solid #ccc;
     margin-bottom: 10px; /* Agrega un margen inferior para espaciar el input del botón */
+	text-align: center;
 }

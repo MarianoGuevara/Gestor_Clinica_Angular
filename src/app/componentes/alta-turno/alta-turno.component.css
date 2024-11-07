@@ -9,3 +9,29 @@
     margin: 0 auto; /* Centra el contenedor */
 
 }
+
+.rounded-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px; /* mismo tamaño que la imagen */
+    height: 50px; /* mismo tamaño que la imagen */
+    padding: 0;
+    border: none;
+    border-radius: 50%; /* para bordes completamente redondeados */
+    overflow: hidden; /* asegura que la imagen quede contenida */
+    background-color: transparent; /* opcional */
+    cursor: pointer;
+}
+
+.rounded-button img {
+    border-radius: 50%; /* también asegura que la imagen quede redondeada */
+}
+
+.btnBack{
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
