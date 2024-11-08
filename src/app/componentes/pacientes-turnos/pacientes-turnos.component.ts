@@ -120,27 +120,72 @@ export class PacientesTurnosComponent {
 		});
 	}
 
-	filtroChange(txt:string){
-		this.turnosFiltrado = [];
-		this.turnos.forEach((turno) => {
-			// console.log(txt);
-			// console.log(turno.especialidad);
-			// console.log(turno.especialidad.includes(txt));
-			// console.log(this.auth.usuarioRealActual?.rol == "paciente");
-			// console.log(this.auth.usuarioRealActual?.id == turno.pacienteId);
+	async filtroChange(txt:string, accion:string = "buscar"){
+		if ((txt == "" || txt == " " || txt == "  ")&& accion == "buscar") {}
+		else
+		{
+			this.turnosFiltrado = [];
+			this.turnos.forEach(async (turno) => {
+				if (this.auth.usuarioRealActual?.rol == "administrador" && (turno.especialidad.includes(txt) || turno.especialistaNombreApellido.includes(txt) )) {
+					{this.turnosFiltrado.push(turno)}
+				}
+				else if (await this.condicionPacienteEspecialista(turno, txt, "paciente") && !(this.turnosFiltrado.includes(turno))) {
+					this.turnosFiltrado.push(turno)
+				}
+				else if (await this.condicionPacienteEspecialista(turno, txt, "especialista") && !(this.turnosFiltrado.includes(turno))) {this.turnosFiltrado.push(turno)}
+				
+			});
+			this.filtroActual = ""
+		}
+		
+	}
+
+
+	async condicionPacienteEspecialista(turno:ITurno, txt:string, rol:string) {
+		let retorno:boolean;
+		let retorno2:boolean = false;
+		let retorno3:boolean = false;
+
+		if (rol == "paciente") {
+			retorno = (
+				(this.auth.usuarioRealActual?.rol == "paciente" && 
+				this.auth.usuarioRealActual?.id == turno.pacienteId) 
+			);
+		} else {
+			retorno = (
+				this.auth.usuarioRealActual?.rol == "especialista" && 
+				this.auth.usuarioRealActual?.id == turno.especialistaId
+			);
 			
-			if (this.auth.usuarioRealActual?.rol == "administrador" && (turno.especialidad.includes(txt) || turno.especialistaNombreApellido.includes(txt) )) {
-				{this.turnosFiltrado.push(turno)}
+		}
+		
+		if (retorno) {
+
+			retorno2 = turno.especialidad.includes(txt) || turno.especialistaNombreApellido.includes(txt);
+
+			const histTurnoDb = await this.historiasClinicasService.GetHistoriaTurno(turno.id);
+
+			if (turno.estado == "Finalizado")  {
+				const historiaDbReal = histTurnoDb.docs[0].data() as IHistoriaClinica;
+
+				retorno3 = (
+					(historiaDbReal.altura.toString().includes(txt) || 
+					historiaDbReal.peso.toString().includes(txt) ||
+					historiaDbReal.presion.toString().includes(txt) ||
+					historiaDbReal.temperatura.toString().includes(txt)
+					)
+					||
+					(historiaDbReal.dinamico1 != "" && historiaDbReal.dinamico1!.includes(txt))
+					||
+					(historiaDbReal.dinamico2 != "" && historiaDbReal.dinamico2!.includes(txt))
+					||
+					(historiaDbReal.dinamico3 != "" && historiaDbReal.dinamico3!.includes(txt))
+				);
 			}
-			else if (this.auth.usuarioRealActual?.rol == "paciente" && 
-				this.auth.usuarioRealActual?.id == turno.pacienteId && 
-				(turno.especialidad.includes(txt) || turno.especialistaNombreApellido.includes(txt) )) {this.turnosFiltrado.push(turno)}
-			else if (this.auth.usuarioRealActual?.rol == "especialista" && 
-				this.auth.usuarioRealActual?.id == turno.especialistaId && 
-				(turno.especialidad.includes(txt) || turno.pacienteNombreApellido.includes(txt))
-				) {this.turnosFiltrado.push(turno)}
-			
-		});
+
+			return retorno2 || retorno3;
+		}
+		return false;
 	}
 
 	async accionModal(id:string, turnoTocado:ITurno|null=null, accion:string ="abrir", cancelar:string = "no") {

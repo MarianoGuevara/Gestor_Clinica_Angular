@@ -1,6 +1,9 @@
 <h3 class="text-center" style="margin-top: 30px;">Sus turnos, {{auth.usuarioRealActual?.apellido}}</h3>
 <div class="input-container">
-	<input type="text" (input)="filtroChange(filtroActual)" [(ngModel)]="filtroActual" placeholder="filtrar turnos" class="filtro-input">
+	<button type="button" class="btn" btn="border" (click)="filtroChange('', 'limpiar')" appBtn>Resetear</button>
+	<input type="text" [(ngModel)]="filtroActual" placeholder="filtrar turnos" class="filtro-input">
+	<button type="button" class="btn" (click)="filtroChange(filtroActual)" appBtn>Buscar</button>
+	
 </div>
 <div class="turnos-container">
 	

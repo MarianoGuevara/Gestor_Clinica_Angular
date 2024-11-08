@@ -29,11 +29,32 @@ export class HistoriaClinicaService {
         return observable;
     }
 
+	async GetHistoriaTurno(idTurno:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'hisotriasClinicas'),
+		    where('idTurno', '==', idTurno), 
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
     async GetHistoriasPaciente(idPaciente:string)
     {
         const turnoQuery = query(
 			collection(this.firestore, 'hisotriasClinicas'),
 		    where('idPaciente', '==', idPaciente), 
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
+	async GetHistoriasPacienteEspecialista(idPaciente:string, idEspecialista:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'hisotriasClinicas'),
+		    where('idPaciente', '==', idPaciente), 
+			where('idEspecialista', '==', idEspecialista), 
 		);
         const especialistaDocs = await getDocs(turnoQuery);
         return especialistaDocs;

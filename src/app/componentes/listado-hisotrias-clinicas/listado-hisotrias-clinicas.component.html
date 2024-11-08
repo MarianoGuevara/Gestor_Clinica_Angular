@@ -1,9 +1,17 @@
-@if (auth.usuarioRealActual?.rol == "administrador") {
-	<h3 class="text-center" style="margin-top: 30px;">Historias clínicas de la app, ADMIN '{{auth.usuarioRealActual?.apellido}}'</h3>
-} @else if (auth.usuarioRealActual?.rol == "especialista"){ 
-	<h3 class="text-center" style="margin-top: 30px;">Su historia clínica, ESPECIALISTA '{{auth.usuarioRealActual?.apellido}}'</h3>
-} @else {
+@if (auth.usuarioRealActual?.rol == "paciente") {
 	<h3 class="text-center" style="margin-top: 30px;">Su historia clínica, PACIENTE '{{auth.usuarioRealActual?.apellido}}'</h3>
+}
+@else {
+	@if (auth.usuarioRealActual?.rol == "administrador") {
+		<h3 class="text-center" style="margin-top: 30px;">Historias clínicas de la app, ADMIN '{{auth.usuarioRealActual?.apellido}}'</h3>
+	} @else if (auth.usuarioRealActual?.rol == "especialista"){ 
+		<h3 class="text-center" style="margin-top: 30px;">Su historia clínica, ESPECIALISTA '{{auth.usuarioRealActual?.apellido}}'</h3>
+	}
+	<div class="pacientes-container">
+		@for (paciente of pacientes; track $index) {
+			<button (click)="generarCardsEspecificas(paciente.id)" appBtn class="btn paciente-btn">{{paciente.nombre}}, {{paciente.apellido}}</button>
+		}	
+	</div>
 }
 
 <div class="turnos-container">

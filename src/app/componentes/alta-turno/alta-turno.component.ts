@@ -10,6 +10,7 @@ import { IHorariosEspecialista } from '../../interfaces/interfaces';
 import { AlertService } from '../../servicios/alert.service';
 import { PacientesService } from '../../servicios/pacientes.service';
 import { TurnosService } from '../../servicios/turnos.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-alta-turno',
@@ -58,6 +59,7 @@ export class AltaTurnoComponent {
 		completado_paciente_atencion: "",
 	}
 	horariosVisibles: boolean[] = [];
+	router = inject(Router);
 
 	constructor(){
 		this.loading.mostrarSpinner();
@@ -339,8 +341,11 @@ export class AltaTurnoComponent {
 		const turnoDisponibleEndDb = await this.turnosService.GetTurnosHorario(horario, fecha);
 		try {
 			const turnoDisponibleEndReal = turnoDisponibleEndDb.docs[0].data() as ITurno;
-			this.loading.ocultarSpinner();
-			this.alertaService.Alerta("Fracaso en el alta", "El horario del turno ya esta ocupado", 'error', true, "/bienvenida");
+			
+			this.alertaService.Alerta("Fracaso en el alta", "El horario del turno ya esta ocupado", 'error').then(()=>{
+				this.loading.ocultarSpinner();
+				this.router.navigate(["/bienvenida"]);
+			})
 		} catch {
 			this.turnosService.Alta(this.turno)
 				.then((rta) => {
@@ -348,15 +353,16 @@ export class AltaTurnoComponent {
 
 				 	// SACAR AL ARRAY DE DISPONIBLES EN PROX TURNO EL HORARIO EXACTO DEL DIA Y FECHA DE ESTE TURNO (NO DIA EN GENERAL SINOO EL ESPECIFICO)
 				 	// HABRIA Q TRAER CON GET LOS TURNOS DEL ESPECIALISTA Y ELIMINAR DE TURNOS DISPONIBLES DEL DIA ESPECIFICO EL TURNO EXACTO
-					
-					this.alertaService.Alerta("El turno fue pedido con exito", "Truno exitoso", 'success', true, "/bienvenida");
+		
+
+					this.alertaService.Alerta("El turno fue pedido con exito", "Truno exitoso", 'success').then(()=>{
+						this.loading.ocultarSpinner();
+						this.router.navigate(["/bienvenida"]);
+					})
 				})
 				.catch((error) => {
 					this.alertaService.Alerta("Fracaso en el alta", error.message, 'error');
 				})
-				.finally(() => {
-					this.loading.ocultarSpinner();
-				});
 				console.log(this.turno);
 		}	
 	}

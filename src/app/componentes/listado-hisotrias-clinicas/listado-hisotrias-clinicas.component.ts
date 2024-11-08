@@ -43,7 +43,8 @@ export class ListadoHisotriasClinicasComponent {
 	suscripcion: Subscription|null = null;
 	historiasClinicasFiltradas: IHistoriaClinica[] = []; // historias segun sea especialista paciente etc
 	cardsHistoriaClinicas: LocalHistoriaClinicaCard[] = []; // de las historias, la info q aparecerá en pantalla. Interfaz local del componente
-	// pipe_fecha = inject(FechaPipe);
+	pacienteSeleccionado: IPaciente | null = null;
+	pacientes: IPaciente[] = []
 
 	constructor() {}
 
@@ -59,53 +60,20 @@ export class ListadoHisotriasClinicasComponent {
 			}
 		} else if (this.auth.usuarioRealActual?.rol == "especialista") {
 			const historiasDb = await this.historiasClinicasService.GetHistoriasEspecialista(this.auth.usuarioRealActual.id);
-
-			for (let i=0; i<historiasDb.docs.length; i++) {
-				this.historiasClinicasFiltradas.push(historiasDb.docs[i].data() as IHistoriaClinica);
-			}
-		} else { // todas para los admins
+			this.pacientes = await this.PacientesDeArray(historiasDb);
+		} else { 
 			const historiasDb = await this.historiasClinicasService.GetHistorias();
-
-			for (let i=0; i<historiasDb.docs.length; i++) {
-				this.historiasClinicasFiltradas.push(historiasDb.docs[i].data() as IHistoriaClinica);
-			}
+			console.log(historiasDb.docs);
+			this.pacientes = await this.PacientesDeArray(historiasDb);
 		}
-		this.crearContenidoCards().then(() => {
+
+		if (this.auth.usuarioRealActual?.rol == "paciente") {
+			this.crearContenidoCards().then(() => {
+				this.loading.ocultarSpinner();
+			});
+		} else {
 			this.loading.ocultarSpinner();
-		});
-
-
-		// GetHistoriasPaciente
-		// this.suscripcion = this.historiasClinicasService.GetHistoriasClinicas().subscribe({
-        //     next: (rta: any[]) => {
-        //         this.historiasClinicasFiltradas = [];
-        //         rta.forEach((element) => {
-		// 			const historiaClinica: IHistoriaClinica = {
-		// 				id: element.id,
-		// 				idPaciente: element.pacienteId,
-		// 				idEspecialista: element.especialistaId,
-		// 				idTurno: element.turnoId ?? '', // Asegúrate de asignar el ID del turno, si existe
-		// 				altura: element.altura ?? 0, // Asigna 0 o el valor adecuado si no está presente
-		// 				peso: element.peso ?? 0,
-		// 				temperatura: element.temperatura ?? 0,
-		// 				presion: element.presion ?? 0,
-		// 				dinamico1: element.dinamico1, // Opcional
-		// 				dinamico2: element.dinamico2, // Opcional
-		// 				dinamico3: element.dinamico3  // Opcional
-		// 			};
-
-        //             this.historiasClinicasFiltradas.push(historiaClinica);
-        //         });
-
-
-		// 		this.crearContenidoCards().then(() => {
-		// 			this.loading.ocultarSpinner();
-		// 		});
-        //     },
-        //     error: (err: any) => {
-        //         console.log('Error ->', (err as Error).message);
-        //     }
-        // })
+		}
 	}
 
 	async crearContenidoCards() {
@@ -139,6 +107,46 @@ export class ListadoHisotriasClinicasComponent {
 			this.cardsHistoriaClinicas.push(card);
 		}
 	}
+
+	// sobre un array de historias clinicas te crea otro de pacientes sin repetir
+	async PacientesDeArray(historiasDb:any) { 
+		let pacientesTodos: any[] = [];
+		for (let i=0; i<historiasDb.docs.length; i++) {
+			const historiaActual = historiasDb.docs[i].data() as IHistoriaClinica;
+
+			const pacienteActual = await this.pacientesService.GetPacienteId(historiaActual.idPaciente);
+			pacientesTodos.push(pacienteActual.docs[0].data() as IPaciente)
+
+			this.historiasClinicasFiltradas.push(historiasDb.docs[i].data() as IHistoriaClinica);
+		}
+
+		pacientesTodos = pacientesTodos.filter((paciente, index, self) => 
+			index === self.findIndex((u) => u.id === paciente.id) // filtra x id
+		);
+
+		return pacientesTodos;
+	}
+
+	async generarCardsEspecificas(idPaciente:string) {
+		this.loading.mostrarSpinner();
+
+		let historiasDePacientesEspecificosDb:any = null;
+
+		if (this.auth.usuarioRealActual?.rol == "administrador") {
+			historiasDePacientesEspecificosDb = await this.historiasClinicasService.GetHistoriasPaciente(idPaciente);
+		} else {
+			historiasDePacientesEspecificosDb = await this.historiasClinicasService.GetHistoriasPacienteEspecialista(idPaciente, this.auth.usuarioRealActual?.id!);
+		}
+		
+		this.historiasClinicasFiltradas = []
+		for (let i=0; i<historiasDePacientesEspecificosDb.docs.length; i++) {
+			this.historiasClinicasFiltradas.push(historiasDePacientesEspecificosDb.docs[i].data() as IHistoriaClinica);
+		}
+
+		await this.crearContenidoCards();
+		this.loading.ocultarSpinner();
+	}
+
 
 	async pdf(idhistoria: string) {
 		const historiaDb = await this.historiasClinicasService.GetHistoriaId(idhistoria);

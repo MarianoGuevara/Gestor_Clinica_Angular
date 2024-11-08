@@ -51,3 +51,19 @@
     flex: 1; 
     min-width: 100px; 
 }
+
+
+.pacientes-container {
+	display: flex;
+	flex-wrap: wrap; /* Permite que los botones pasen a la siguiente línea si es necesario */
+	justify-content: center; /* Centra horizontalmente los botones */
+	gap: 10px; /* Espacio entre los botones */
+	margin-top: 20px; /* Ajusta el espacio superior */
+  }
+  
+  .paciente-btn {
+	padding: 10px 20px; /* Ajusta el tamaño del botón */
+	border-radius: 5px; /* Bordes redondeados para un aspecto más bonito */
+	font-size: 16px; /* Ajusta el tamaño de la fuente */
+  }
+  
