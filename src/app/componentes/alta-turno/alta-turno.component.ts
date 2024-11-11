@@ -11,11 +11,17 @@ import { AlertService } from '../../servicios/alert.service';
 import { PacientesService } from '../../servicios/pacientes.service';
 import { TurnosService } from '../../servicios/turnos.service';
 import { Router } from '@angular/router';
+import { FechaPipe } from '../../pipes/fecha.pipe';
+import { DisplayDirective } from '../../directivas/display.directive';
 
 @Component({
   selector: 'app-alta-turno',
   standalone: true,
-  imports: [BtnDirective],
+  imports: [
+	BtnDirective,
+	FechaPipe,
+	DisplayDirective
+  ],
   templateUrl: './alta-turno.component.html',
   styleUrl: './alta-turno.component.css'
 })

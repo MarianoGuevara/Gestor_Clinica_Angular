@@ -8,30 +8,30 @@
   
         <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
             @if (auth.usuarioActual == null) {
-                <li class="nav-link px-2 text-white option" routerLink="/bienvenida">¡Bienvenido/a a la clínica 'OnLine'!</li>
+                <li class="nav-link px-2 text-white" appTxt routerLink="/bienvenida">¡Bienvenido/a a la clínica 'OnLine'!</li>
             }
             @else {
-                <li class="nav-link px-2 text-white option" routerLink="/bienvenida">Home</li>
+                <li class="nav-link px-2 text-white" appTxt routerLink="/bienvenida">Home</li>
 
 				@if (auth.usuarioRealActual == null){
 					<app-spinner></app-spinner>
 				}
 				@else {
 					@if (auth.determinarTipoUsuario() == "administrador"){
-						<li class="nav-link px-2 text-white option" routerLink="/admin-usuarios">Seccion usuarios</li>
-						<li class="nav-link px-2 text-white option" routerLink="/mis-turnos">Turnos</li>
+						<li class="nav-link px-2 text-white" appTxt routerLink="/admin-usuarios">Seccion usuarios</li>
+						<li class="nav-link px-2 text-white" appTxt routerLink="/mis-turnos">Turnos</li>
 					}
 					@else {
-						<li class="nav-link px-2 text-white option" routerLink="/mis-turnos">Mis turnos</li>
+						<li class="nav-link px-2 text-white" appTxt routerLink="/mis-turnos">Mis turnos</li>
 					}	
 
 					@if (auth.determinarTipoUsuario() == "administrador" || auth.determinarTipoUsuario() == "paciente")
 					{
-						<li class="nav-link px-2 text-white option" routerLink="/alta-turno">Solicitar turno</li>
+						<li class="nav-link px-2 text-white" appTxt routerLink="/alta-turno">Solicitar turno</li>
 					}
 
 					@if (auth.determinarTipoUsuario() == "especialista") {
-						<li class="nav-link px-2 text-white option" routerLink="/historias-clinicas">Pacientes</li>
+						<li class="nav-link px-2 text-white" appTxt routerLink="/historias-clinicas">Pacientes</li>
 					}
 				}
             }          

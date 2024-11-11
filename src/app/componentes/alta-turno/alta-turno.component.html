@@ -58,25 +58,19 @@
 						{{ horariosDisponibles[$index].fecha }}
 					</button>
 
-					@if (horariosVisibles[$index]) {
-						<div>
+					<!-- @if (horariosVisibles[$index]) { -->
+						<div appDisplay [ngVisibleIf]="horariosVisibles[$index]">
 							@for (horario of horariosDisponibles[$index].horarios; track horario) {
 								<button 
 									(click)="seleccionarHorario($index, item.fecha, horario)"
 									appBtn 
 									class="btn" 
 									style="margin: 10px;">
-									{{ horario }}
+									{{ horario | fecha}}
 								</button>
 							}
 						</div>
-					}
-
-					<!-- <p >{{item["fecha"]}}</p>
-					@for (fecha of item["horarios"]; track fecha) 
-					{
-						<button (click)="seleccionarHorario(item['fecha'], fecha)" appBtn class="btn" style="margin-bottom: 3px;">{{fecha}}</button>
-					} -->
+					<!-- } -->
 					<br>
 				}
 			}

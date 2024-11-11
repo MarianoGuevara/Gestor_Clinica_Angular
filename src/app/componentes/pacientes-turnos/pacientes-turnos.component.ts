@@ -13,6 +13,7 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Modal } from 'bootstrap'; 
 import { HorariosService } from '../../servicios/horarios.service';
 import { HistoriaClinicaService } from '../../servicios/historia-clinica.service';
+import { FormatearEstadoTurnoPipe } from '../../pipes/formatear-estado-turno.pipe';
 
 @Component({
   selector: 'app-pacientes-turnos',
@@ -21,6 +22,7 @@ import { HistoriaClinicaService } from '../../servicios/historia-clinica.service
 	BtnDirective,
 	FormsModule,
     ReactiveFormsModule,
+	FormatearEstadoTurnoPipe
   ],
   templateUrl: './pacientes-turnos.component.html',
   styleUrl: './pacientes-turnos.component.css'

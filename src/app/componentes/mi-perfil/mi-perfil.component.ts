@@ -8,13 +8,15 @@ import { HorariosService } from '../../servicios/horarios.service';
 import { LoadingService } from '../../servicios/loading.service';
 import { AlertService } from '../../servicios/alert.service';
 import { Router, RouterLink } from '@angular/router';
+import { EnmascararDniPipe } from '../../pipes/enmascarar-dni.pipe';
 
 @Component({
   selector: 'app-mi-perfil',
   standalone: true,
   imports: [
 	BtnDirective,
-	RouterLink
+	RouterLink,
+	EnmascararDniPipe
   ],
   templateUrl: './mi-perfil.component.html',
   styleUrl: './mi-perfil.component.css'
@@ -42,6 +44,9 @@ export class MiPerfilComponent {
 		"12:00", "12:30", "13:00", "13:30", "14:00",
 	];
 	horariosActual: IHorariosEspecialista | null = null;
+	dni: boolean = false;
+
+	verDni() {this.dni = !this.dni;}
 
 	ngOnInit()
 	{

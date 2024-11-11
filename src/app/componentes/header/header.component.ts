@@ -3,6 +3,7 @@ import { RouterLink, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../servicios/auth.service';
 import { BtnDirective } from '../../directivas/btn.directive';
 import { SpinnerComponent } from '../spinner/spinner.component';
+import { TxtDirective } from '../../directivas/txt.directive';
 
 @Component({
   selector: 'app-header',
@@ -11,7 +12,8 @@ import { SpinnerComponent } from '../spinner/spinner.component';
     RouterOutlet,
     RouterLink,
     BtnDirective,
-	SpinnerComponent
+	SpinnerComponent,
+	TxtDirective
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'

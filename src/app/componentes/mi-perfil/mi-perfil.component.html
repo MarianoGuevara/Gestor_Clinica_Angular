@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card fade-in">
     <div class="card-header">
         <h3>{{ user.usuarioRealActual?.nombre }} {{ user.usuarioRealActual?.apellido }}</h3>
         <p><strong>Rol:</strong> {{ user.usuarioRealActual?.rol }}</p>
@@ -7,7 +7,10 @@
         <p><strong>Nombre:</strong> {{ user.usuarioRealActual?.nombre }}</p>
         <p><strong>Apellido:</strong> {{ user.usuarioRealActual?.apellido }}</p>
         <p><strong>Edad:</strong> {{ user.usuarioRealActual?.edad }}</p>
-        <p><strong>DNI:</strong> {{ user.usuarioRealActual?.dni }}</p>
+
+		@if (dni) {<p class="dni" (click)="verDni()"><strong>DNI:</strong> {{ user.usuarioRealActual?.dni}}</p>}
+        @else {<p class="dni" (click)="verDni()"><strong>DNI:</strong> {{ user.usuarioRealActual?.dni | enmascararDni}}</p>}
+
         <p><strong>Correo:</strong> {{ user.usuarioRealActual?.mail }}</p>
         <img src="{{ user.usuarioRealActual?.imagenPerfil }}" alt="Imagen 1" class="user-image">
 

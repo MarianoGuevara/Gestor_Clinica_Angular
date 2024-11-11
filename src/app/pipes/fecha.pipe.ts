@@ -5,13 +5,15 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: true
 })
 export class FechaPipe implements PipeTransform {
-	transform(date: Date): string {
-
-		const optionsDate: Intl.DateTimeFormatOptions = { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
-	  
-		const formattedDate = date.toLocaleDateString('es-AR', optionsDate);
-	  
-		return formattedDate;
+	transform(date: string): string { // formatea de 08:00 a 08:00 pm para
+		const connector = this.AmPm(date);
+		return date + " " + connector;
 	  }
 
+	AmPm(date:string): string {
+		const arraySplitt = date.split(":")
+		const fechaInt: number =  parseInt(arraySplitt[0]);
+		if (fechaInt > 11) {return "PM";}
+		else {return "AM";}
+	}
 }

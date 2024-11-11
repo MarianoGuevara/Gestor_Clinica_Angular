@@ -68,3 +68,19 @@
 	width: 20px; /* Ajusta el tamaño de la imagen */
 	height: 20px; /* Ajusta el tamaño de la imagen */
   }
+
+
+  @keyframes zoomIn {
+	0% {
+	  transform: scale(0.5); /* Comienza pequeño */
+	  opacity: 0;
+	}
+	100% {
+	  transform: scale(1); /* Termina en su tamaño normal */
+	  opacity: 1;
+	}
+  }
+  
+  .zoom-in {
+	animation: zoomIn 0.7s ease-out;
+  }

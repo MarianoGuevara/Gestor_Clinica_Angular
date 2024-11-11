@@ -66,7 +66,7 @@
 
 			</div>
 			<div class="turno-body">
-				<p><strong>Estado:</strong> {{ turnosFiltrado[$index].estado }}</p>
+				<p><strong>Estado:</strong> {{ turnosFiltrado[$index].estado | formatearEstadoTurno}}</p>
 				<p><strong>Especialista:</strong> {{ turnosFiltrado[$index].especialistaNombreApellido}}</p>
 				<p><strong>Paciente:</strong> {{ turnosFiltrado[$index].pacienteNombreApellido }}</p>
 			</div>

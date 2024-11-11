@@ -74,3 +74,23 @@
     overflow-x: auto; 
     padding: 0; 
 }
+
+.dni:hover{
+	cursor: pointer;
+	color: violet !important;
+	
+}
+
+
+@keyframes fadeIn {
+	0% {
+	  opacity: 0;
+	}
+	100% {
+	  opacity: 1;
+	}
+  }
+  
+  .fade-in {
+	animation: fadeIn 0.5s ease-in;
+  }
