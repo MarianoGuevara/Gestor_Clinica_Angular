@@ -94,20 +94,6 @@ export class AltaTurnoComponent {
                         );
                     });
 
-					// ESTO ME CONSIGUE TODAS LAS ESPECIALIDADES... YA NO LO NECESITO PERO X LAS DUDAS...
-					// for (let i=0; i<this.arrayEspecialistas.length; i++)
-					// {
-					// 	for (let j=0; j<this.arrayEspecialistas[i].especialidad.length; j++)
-					// 	{
-					// 		this.arrayEspecialidades.push(this.arrayEspecialistas[i].especialidad[j]);
-					// 	}
-					// }
-
-					// console.log(this.arrayEspecialidades);
-					// this.arrayEspecialidades = Array.from(new Set(this.arrayEspecialidades))
-					// console.log("ESPECIALIDADES SET");
-					// console.log(this.arrayEspecialidades);
-
 					this.subscription.unsubscribe();
 					this.loading.ocultarSpinner();
                 },
@@ -115,13 +101,9 @@ export class AltaTurnoComponent {
                     console.log('Error ->', (err as Error).message);
 					this.loading.ocultarSpinner();
                 },
-				complete: () => {
-					// this.subscription.unsubscribe();
-					this.loading.ocultarSpinner();
-				}
+				complete: () => { this.loading.ocultarSpinner();}
             }
 		)
-
 		this.traerPacientes();
 	}
 
@@ -160,10 +142,7 @@ export class AltaTurnoComponent {
 				console.log('Error ->', (err as Error).message);
 				this.loading.ocultarSpinner();
 			},
-			complete: () => {
-				// this.subscription2?.unsubscribe();
-				this.loading.ocultarSpinner();
-			}
+			complete: () => { this.loading.ocultarSpinner();}
 		})
 	}
 

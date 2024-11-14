@@ -1,0 +1,39 @@
+<div class="card my-3" [style.width]="anchoContenedorGrafico" style="word-wrap: break-word">
+    <div class="card-body">
+        <h3 class="card-title text-center mb-3">
+            <strong>{{ tituloGrafico }}</strong>
+        </h3>
+		@if(this.graficoPie != null) {
+		<apx-chart
+			[series]="graficoPie!.series"
+			[chart]="graficoPie!.chart"
+			[labels]="graficoPie!.labels"
+			[responsive]="graficoPie!.responsive"
+			style="height: 100%; width: 100%"
+		>
+		</apx-chart>
+		} @else if ( this.graficoBarras != null) {
+		<apx-chart
+			[series]="graficoBarras!.series"
+			[chart]="graficoBarras!.chart"
+			[dataLabels]="graficoBarras!.dataLabels"
+			[plotOptions]="graficoBarras!.plotOptions"
+			[yaxis]="graficoBarras!.yaxis"
+			[xaxis]="graficoBarras!.xaxis"
+			[fill]="graficoBarras!.fill"
+			style="height: 100%; width: 100%"
+		>
+		</apx-chart>
+		} @else if ( this.graficoLineas != null) {
+		<apx-chart
+			[series]="graficoLineas!.series"
+			[chart]="graficoLineas!.chart"
+			[dataLabels]="graficoLineas!.dataLabels"
+			[xaxis]="graficoLineas!.xaxis"
+			[yaxis]="graficoLineas!.yaxis"
+			style="height: 100%; width: 100%"
+		>
+		</apx-chart>
+		}
+	</div>
+</div>

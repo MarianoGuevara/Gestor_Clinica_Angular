@@ -8,6 +8,7 @@ import { LoadingService } from '../../servicios/loading.service';
 import { BtnDirective } from '../../directivas/btn.directive';
 import { IUsuario } from '../../interfaces/interfaces';
 import { trigger, state, style, transition, animate } from '@angular/animations';
+import { LogsService } from '../../servicios/logs.service';
 
 
 @Component({
@@ -31,6 +32,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
+	logs = inject(LogsService);
     auth = inject(AuthService);
     loading = inject(LoadingService);
     alert = inject(AlertService);
@@ -93,6 +95,7 @@ export class LoginComponent {
                     {
                         this.auth.logueado = true;
                         this.auth.usuarioActual = retorno.user;
+						this.logs.Alta(this.auth.usuarioRealActual);
                         this.alert.Alerta("Exito", "Bienvenido, " + usuario?.mail, 'success', this.auth.logueado, "/bienvenida");
                     }
                     else

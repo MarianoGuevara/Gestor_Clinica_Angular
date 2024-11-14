@@ -1,0 +1,26 @@
+.contenedor-graficos {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 1200px; /* Opcional: limita el ancho máximo */
+    margin: 0 auto; /* Centra el contenedor */
+}
+
+.cardCompleta {
+    background-color: rgb(224, 224, 224);
+    padding: 10px; /* Menos espacio dentro de las cards */
+    box-sizing: border-box; /* Asegura que el padding no afecte el tamaño total */
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.app-grafico-generico {
+    margin: 0; /* Elimina los márgenes de la gráfica */
+    width: 100%;
+    height: 200px; /* Ajusta el tamaño de la gráfica */
+}

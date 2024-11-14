@@ -33,4 +33,8 @@ export const routes: Routes = [
         path: 'historias-clinicas',
         loadComponent: ()=> import('./componentes/listado-hisotrias-clinicas/listado-hisotrias-clinicas.component').then(m => m.ListadoHisotriasClinicasComponent)
     },
+	{
+        path: 'estadisticas',
+        loadComponent: ()=> import('./componentes/estadisticas/estadisticas.component').then(m => m.EstadisticasComponent)
+    },
 ];
