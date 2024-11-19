@@ -74,3 +74,11 @@ export interface IEspecialidad {
 	nombre: string;
 	foto: string;
 }
+
+export interface ILog {
+	id: string,
+	fecha: string,
+	horario: string,
+	id_user: string,
+	nombre_user: string,
+}

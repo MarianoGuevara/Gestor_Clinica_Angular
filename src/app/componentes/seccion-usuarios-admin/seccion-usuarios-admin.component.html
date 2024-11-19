@@ -16,6 +16,9 @@
                             <button appBtn btn="border" class="btn" (click)="deshabilitarEspecialista(item)">Deshabilitar</button>
                         }
                     }
+					@else if (isPaciente(item)) {
+						<button class="btn" appBtn (click)="pdfUsuariosTurnos(item.id, item.apellido)">PDF</button>
+					}
                 </div>
                 <div class="card-body">
                     <p><strong>Nombre</strong>: {{ item.nombre }}</p>

@@ -9,6 +9,8 @@ import { EspecialistasService } from '../../servicios/especialistas.service';
 import { PacientesService } from '../../servicios/pacientes.service';
 import { TurnosService } from '../../servicios/turnos.service';
 import jsPDF from 'jspdf';
+import { FechaPipe } from '../../pipes/fecha.pipe';
+import { FormatearEstadoTurnoPipe } from '../../pipes/formatear-estado-turno.pipe';
 
 interface LocalHistoriaClinicaCard {
 	especialistaNombre: string;
@@ -29,7 +31,7 @@ interface LocalHistoriaClinicaCard {
 @Component({
   selector: 'app-listado-hisotrias-clinicas',
   standalone: true,
-  imports: [BtnDirective,],
+  imports: [BtnDirective,FechaPipe, FormatearEstadoTurnoPipe],
   templateUrl: './listado-hisotrias-clinicas.component.html',
   styleUrl: './listado-hisotrias-clinicas.component.css'
 })
@@ -43,8 +45,10 @@ export class ListadoHisotriasClinicasComponent {
 	suscripcion: Subscription|null = null;
 	historiasClinicasFiltradas: IHistoriaClinica[] = []; // historias segun sea especialista paciente etc
 	cardsHistoriaClinicas: LocalHistoriaClinicaCard[] = []; // de las historias, la info q aparecerá en pantalla. Interfaz local del componente
+	cardsTurnos: ITurno[] = []; 
 	pacienteSeleccionado: IPaciente | null = null;
 	pacientes: IPaciente[] = []
+	especialistas: IEspecialista[] = []
 
 	constructor() {}
 
@@ -54,7 +58,7 @@ export class ListadoHisotriasClinicasComponent {
 
 		if (this.auth.usuarioRealActual?.rol == "paciente") {
 			const historiasDb = await this.historiasClinicasService.GetHistoriasPaciente(this.auth.usuarioRealActual.id);
-
+			this.especialistas = await this.EspecialistasDeArray(historiasDb);
 			for (let i=0; i<historiasDb.docs.length; i++) {
 				this.historiasClinicasFiltradas.push(historiasDb.docs[i].data() as IHistoriaClinica);
 			}
@@ -127,6 +131,25 @@ export class ListadoHisotriasClinicasComponent {
 		return pacientesTodos;
 	}
 
+	async EspecialistasDeArray(historiasDb:any) { 
+		let especialistasTodos: any[] = [];
+		for (let i=0; i<historiasDb.docs.length; i++) {
+			const historiaActual = historiasDb.docs[i].data() as IHistoriaClinica;
+
+			const especialistaActual = await this.especialistasService.GetEspecialistaId(historiaActual.idEspecialista);
+			especialistasTodos.push(especialistaActual.docs[0].data() as IEspecialista)
+		}
+
+		especialistasTodos = especialistasTodos.filter((especialista, index, self) => 
+			index === self.findIndex((u) => u.id === especialista.id) // filtra x id
+		);
+
+		return especialistasTodos;
+	}
+
+
+
+
 	async generarCardsEspecificas(idPaciente:string) {
 		this.loading.mostrarSpinner();
 
@@ -136,6 +159,15 @@ export class ListadoHisotriasClinicasComponent {
 			historiasDePacientesEspecificosDb = await this.historiasClinicasService.GetHistoriasPaciente(idPaciente);
 		} else {
 			historiasDePacientesEspecificosDb = await this.historiasClinicasService.GetHistoriasPacienteEspecialista(idPaciente, this.auth.usuarioRealActual?.id!);
+			
+			this.cardsTurnos = []
+			for (let i=0; i<historiasDePacientesEspecificosDb.docs.length; i++) {
+				const historiaActual = historiasDePacientesEspecificosDb.docs[i].data() as IHistoriaClinica;
+	
+				const turnoActualDb = await this.turnosService.GetTurnoId(historiaActual.idTurno);
+				const turnoActual = turnoActualDb.docs[0].data() as ITurno;
+				this.cardsTurnos.push(turnoActual);
+			}
 		}
 		
 		this.historiasClinicasFiltradas = []
@@ -189,10 +221,77 @@ export class ListadoHisotriasClinicasComponent {
 		doc.save(`${patientName}_${formattedDate}_HistoriaClinica.pdf`);
 	}
 
+	async generarPDFEspecialistas(especialista: IEspecialista) {
+		this.loading.mostrarSpinner();
+	  
+		const doc = new jsPDF();
+		const logoData = 'assets/logo.png';
+	  
+		// Agregar logo y encabezado en la primera página
+		doc.addImage(logoData, 'PNG', 70, 10, 50, 50);
+		doc.setFontSize(16);
+		doc.text('Historia Clínica', 76, 70);
+		doc.setFontSize(12);
+		doc.text(`Paciente: ${this.auth.usuarioRealActual?.nombre}, ${this.auth.usuarioRealActual?.apellido}`, 10, 80);
+		doc.text(`Especialista: ${especialista.nombre}, ${especialista.apellido}`, 10, 90);
+	  
+		// Obtener las historias del especialista y el paciente
+		const historiasDb = await this.historiasClinicasService.GetHistoriasEspecialistaYPaciente(
+		  especialista.id,
+		  this.auth.usuarioRealActual!.id
+		);
+	  
+		let yOffset = 110; // Iniciar debajo del encabezado
+	  
+		for (let i = 0; i < historiasDb.docs.length; i++) {
+		  const historia = historiasDb.docs[i].data() as IHistoriaClinica;
+		
+		  // Insertar los datos de la historia
+		  doc.setFontSize(12);
+		  doc.text(`Historia ${i + 1}`, 10, yOffset);
+		  yOffset += 10;
+		  doc.text(`Altura: ${historia.altura} cm`, 10, yOffset);
+		  yOffset += 10;
+		  doc.text(`Peso: ${historia.peso} kg`, 10, yOffset);
+		  yOffset += 10;
+		  doc.text(`Temperatura: ${historia.temperatura} °C`, 10, yOffset);
+		  yOffset += 10;
+		  doc.text(`Presión: ${historia.presion}`, 10, yOffset);
+		  yOffset += 10;
+	  
+		  // Insertar datos dinámicos
+		  const datosDinamicos = [historia.dinamico1, historia.dinamico2, historia.dinamico3];
+		  datosDinamicos.forEach((dato) => {
+			if (dato) {
+			  doc.text(dato, 10, yOffset);
+			  yOffset += 10;
+			}
+		  });
+	  
+		  // Separador
+		  doc.text('____________________', 10, yOffset);
+		  yOffset += 10;
+	  
+		  // Comprobar si es necesario crear una nueva página
+		  if (yOffset > 280) {
+			doc.addPage();
+			yOffset = 20; // Reiniciar el yOffset en la nueva página
+		  }
+		}
+	  
+		// Guardar el PDF
+		const fileName = `HistoriasClinicas_${especialista.nombre}_${new Date().toISOString()}.pdf`;
+		doc.save(fileName);
+	  
+		this.loading.ocultarSpinner();
+	  }
+	  
+
 
 	ngOnDestroy(): void {
 		if (this.suscripcion){
 			this.suscripcion.unsubscribe();
 		}
-	}	
+	}
+	
 }

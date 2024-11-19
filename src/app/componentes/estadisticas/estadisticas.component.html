@@ -2,6 +2,54 @@
 <div class="contenedor-graficos">
 	<div class="card d-flex flex-wrap cardCompleta">
 		<div class="d-flex justify-content-center mt-3">
+			<div style="max-height: 400px; overflow-y: auto;">
+				<table class="table table-striped table-bordered table-hover" id="tablaLogs">
+				  <thead class="thead-dark">
+					<tr>
+					  <th scope="col">Usuario</th>
+					  <th scope="col">Día</th>
+					  <th scope="col">Horario</th>
+					</tr>
+				  </thead>
+				  <tbody>
+					@for (log of logsReales; track $index) {
+					  <tr>
+						<td>{{ log.nombre_user }}</td>
+						<td>{{ log.fecha }}</td>
+						<td>{{ log.horario | fecha }}</td>
+					  </tr>
+					}
+				  </tbody>
+				</table>
+			</div>
+			
+			  
+		</div>
+		<div class="d-flex justify-content-center mt-3">
+			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('tablaLogs')">Generar PDF</button>
+		</div>
+	</div>
+
+	@if (labelsEspecialidad != []) {
+		<div class="card d-flex flex-wrap cardCompleta">
+			<div class="d-flex justify-content-center mt-3">
+				<app-grafico-generico id="graf2" tipoGrafico="barras"
+				[labels]="labelsEspecialidad"
+				[series]="seriesEspecialidad"
+				tituloGrafico="Cantidad de turnos por especialidad"
+				[anchoGrafico]="'250px'"
+				[anchoContenedorGrafico]="'350px'">
+				</app-grafico-generico>
+			</div>
+			<div class="d-flex justify-content-center mt-3">
+				<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf2')">Generar PDF</button>
+			</div>
+		</div>
+	}
+	
+	
+	<div class="card d-flex flex-wrap cardCompleta">
+		<div class="d-flex justify-content-center mt-3">
 			<app-grafico-generico id="graf1" tipoGrafico="pie"
 			[labels]="['k','l','m','n','o']"
 			[series]="[15,25,35,45,55]"
@@ -15,20 +63,6 @@
 		</div>
 	</div>
 
-	<div class="card d-flex flex-wrap cardCompleta">
-		<div class="d-flex justify-content-center mt-3">
-			<app-grafico-generico id="graf2" tipoGrafico="barras"
-			[labels]="['k','l','m','n','o']"
-			[series]="[{name:'', data:[1,2,3,4,5]}]"
-			tituloGrafico="Gráfico 3"
-			[anchoGrafico]="'250px'"
-			[anchoContenedorGrafico]="'350px'">
-			</app-grafico-generico>
-		</div>
-		<div class="d-flex justify-content-center mt-3">
-			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf2')">Generar PDF</button>
-		</div>
-	</div>
 
 	<div class="card d-flex flex-wrap cardCompleta">
 		<div class="d-flex justify-content-center mt-3">

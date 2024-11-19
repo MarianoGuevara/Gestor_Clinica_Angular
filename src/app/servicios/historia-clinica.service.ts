@@ -60,6 +60,18 @@ export class HistoriaClinicaService {
         return especialistaDocs;
     }
 
+	async GetHistoriasEspecialistaYPaciente(idEspecialista:string, idPaciente:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'hisotriasClinicas'),
+		    where('idEspecialista', '==', idEspecialista), 
+			where('idPaciente', '==', idPaciente), 
+			
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
 	async GetHistoriasEspecialista(idEspecialista:string)
     {
         const turnoQuery = query(

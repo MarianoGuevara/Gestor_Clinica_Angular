@@ -1,5 +1,15 @@
 @if (auth.usuarioRealActual?.rol == "paciente") {
 	<h3 class="text-center" style="margin-top: 30px;">Su historia clínica, PACIENTE '{{auth.usuarioRealActual?.apellido}}'</h3>
+
+	<h5 class="text-center" style="margin-top: 10px;">Generar PDF de especialista</h5>
+	<div class="pacientes-container">
+		@for (especialista of especialistas; track $index) {
+
+			
+
+			<button (click)="generarPDFEspecialistas(especialista)" appBtn btn="border" class="btn paciente-btn">{{especialista.nombre}}, {{especialista.apellido}}</button>
+		}	
+	</div>
 }
 @else {
 	@if (auth.usuarioRealActual?.rol == "administrador") {
@@ -9,32 +19,69 @@
 	}
 	<div class="pacientes-container">
 		@for (paciente of pacientes; track $index) {
-			<button (click)="generarCardsEspecificas(paciente.id)" appBtn class="btn paciente-btn">{{paciente.nombre}}, {{paciente.apellido}}</button>
+			<button (click)="generarCardsEspecificas(paciente.id)" appBtn class="btn paciente-btn">
+				<div style="display: flex; flex-direction: column; justify-content: center; align-items: center; align-content: center;">
+					<img src="{{pacientes[$index].imagenPerfil}}" width="50px" height="auto">
+					<p style="margin: 0;">{{pacientes[$index].nombre}}, {{pacientes[$index].apellido}}</p>
+				</div>
+			</button>
 		}	
 	</div>
 }
 
 <div class="turnos-container">
-	@for (item of cardsHistoriaClinicas; track $index) {
-		<div class="turno-card">
-			<div class="turno-header">
-				<h4 style="margin-bottom: 10px;"><strong></strong></h4>
-				<p><strong>Especialidad: </strong>{{cardsHistoriaClinicas[$index].especialidad}}</p>
-				<p><strong>Especialista: </strong>{{cardsHistoriaClinicas[$index].especialistaNombre}}</p>
-				<p><strong>Paciente: </strong>{{cardsHistoriaClinicas[$index].pacienteNombre}}</p>
-				<p><strong>Fecha: </strong>{{cardsHistoriaClinicas[$index].fecha}} - {{cardsHistoriaClinicas[$index].horario}}</p>
-				<button (click)="pdf(cardsHistoriaClinicas[$index].id_historia)" appBtn btn="border" class="btn">PDF</button>
+	@if (this.auth.usuarioRealActual?.rol != "especialista") {
+		@for (item of cardsHistoriaClinicas; track $index) {
+			<div class="turno-card">
+				<div class="turno-header">
+					<h4 style="margin-bottom: 10px;"><strong></strong></h4>
+					<p><strong>Especialidad: </strong>{{cardsHistoriaClinicas[$index].especialidad}}</p>
+					<p><strong>Especialista: </strong>{{cardsHistoriaClinicas[$index].especialistaNombre}}</p>
+					<p><strong>Paciente: </strong>{{cardsHistoriaClinicas[$index].pacienteNombre}}</p>
+					<p><strong>Fecha: </strong>{{cardsHistoriaClinicas[$index].fecha}} - {{cardsHistoriaClinicas[$index].horario}}</p>
+					<button (click)="pdf(cardsHistoriaClinicas[$index].id_historia)" appBtn btn="border" class="btn">PDF</button>
+				</div>
+				<div class="turno-body">
+					<p><strong>Altura: </strong>{{cardsHistoriaClinicas[$index].altura}}</p>
+					<p><strong>Peso: </strong>{{cardsHistoriaClinicas[$index].peso}}</p>
+					<p><strong>Temperatura: </strong>{{cardsHistoriaClinicas[$index].temperatura}}</p>
+					<p><strong>Presión: </strong>{{cardsHistoriaClinicas[$index].presion}}</p>
+					@if (cardsHistoriaClinicas[$index].dinamico1 != "") {<p><strong>Dinamico 1: </strong>{{cardsHistoriaClinicas[$index].dinamico1}}</p>}
+					@if (cardsHistoriaClinicas[$index].dinamico2 != "") {<p><strong>Dinamico 2: </strong>{{cardsHistoriaClinicas[$index].dinamico2}}</p>}
+					@if (cardsHistoriaClinicas[$index].dinamico3 != "") {<p><strong>Dinamico 3: </strong>{{cardsHistoriaClinicas[$index].dinamico3}}</p>}
+				</div>
 			</div>
-			<div class="turno-body">
-				<p><strong>Altura: </strong>{{cardsHistoriaClinicas[$index].altura}}</p>
-				<p><strong>Peso: </strong>{{cardsHistoriaClinicas[$index].peso}}</p>
-				<p><strong>Temperatura: </strong>{{cardsHistoriaClinicas[$index].temperatura}}</p>
-				<p><strong>Presión: </strong>{{cardsHistoriaClinicas[$index].presion}}</p>
-				@if (cardsHistoriaClinicas[$index].dinamico1 != "") {<p><strong>Dinamico 1: </strong>{{cardsHistoriaClinicas[$index].dinamico1}}</p>}
-				@if (cardsHistoriaClinicas[$index].dinamico2 != "") {<p><strong>Dinamico 2: </strong>{{cardsHistoriaClinicas[$index].dinamico2}}</p>}
-				@if (cardsHistoriaClinicas[$index].dinamico3 != "") {<p><strong>Dinamico 3: </strong>{{cardsHistoriaClinicas[$index].dinamico3}}</p>}
+		}
+	} @else { 
+		@for (item of cardsHistoriaClinicas; track $index) {
+			<div class="turno-card">
+				<div class="turno-header">
+					<h4 style="margin-bottom: 10px;"><strong></strong></h4>
+					<p><strong>Especialidad: </strong>{{cardsHistoriaClinicas[$index].especialidad}}</p>
+					<p><strong>Especialista: </strong>{{cardsHistoriaClinicas[$index].especialistaNombre}}</p>
+					<p><strong>Paciente: </strong>{{cardsHistoriaClinicas[$index].pacienteNombre}}</p>
+					<p><strong>Fecha: </strong>{{cardsHistoriaClinicas[$index].fecha}} - {{cardsHistoriaClinicas[$index].horario}}</p>
+					<button (click)="pdf(cardsHistoriaClinicas[$index].id_historia)" appBtn btn="border" class="btn">PDF</button>
+				</div>
+				<div class="turno-body">
+					<p><strong>Altura: </strong>{{cardsHistoriaClinicas[$index].altura}}</p>
+					<p><strong>Peso: </strong>{{cardsHistoriaClinicas[$index].peso}}</p>
+					<p><strong>Temperatura: </strong>{{cardsHistoriaClinicas[$index].temperatura}}</p>
+					<p><strong>Presión: </strong>{{cardsHistoriaClinicas[$index].presion}}</p>
+					@if (cardsHistoriaClinicas[$index].dinamico1 != "") {<p><strong>Dinamico 1: </strong>{{cardsHistoriaClinicas[$index].dinamico1}}</p>}
+					@if (cardsHistoriaClinicas[$index].dinamico2 != "") {<p><strong>Dinamico 2: </strong>{{cardsHistoriaClinicas[$index].dinamico2}}</p>}
+					@if (cardsHistoriaClinicas[$index].dinamico3 != "") {<p><strong>Dinamico 3: </strong>{{cardsHistoriaClinicas[$index].dinamico3}}</p>}
+
+					<br>
+					<p><strong style="color: violet;">SOBRE EL TURNO DE LA HISTORIA...</strong></p>
+					<p><strong style="color: violet;">Fecha: </strong>{{cardsTurnos[$index].fecha}}, {{cardsTurnos[$index].horario | fecha}}</p>
+					<p><strong style="color: violet;">Especialidad: </strong>{{cardsTurnos[$index].especialidad}}</p>
+					<p><strong style="color: violet;">Estado: </strong>{{cardsTurnos[$index].estado | formatearEstadoTurno}}</p>
+					<p><strong style="color: violet;">Reseña: </strong>{{cardsTurnos[$index].completado_especialista}}</p>
+				</div>
 			</div>
-		</div>
+		}
 	}
+	
 </div>
 	

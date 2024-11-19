@@ -38,6 +38,15 @@ export class EspecialistasService {
     
         return observable;
     }
+	
+	async GetEspecialistasNormal()
+    {
+        const especialistaQuery = query(
+			collection(this.firestore, 'especialistas'), 
+		);
+        const especialistaDocs = await getDocs(especialistaQuery);
+        return especialistaDocs;
+    }
 
 	async GetEspecialistaId(id:string)
     {

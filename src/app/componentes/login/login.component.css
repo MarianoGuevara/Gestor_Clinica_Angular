@@ -70,17 +70,16 @@
   }
 
 
-  @keyframes zoomIn {
+  @keyframes slideInRight {
 	0% {
-	  transform: scale(0.5); /* Comienza pequeño */
+	  transform: translateX(100%); /* Empieza fuera de la pantalla por la derecha */
 	  opacity: 0;
 	}
 	100% {
-	  transform: scale(1); /* Termina en su tamaño normal */
+	  transform: translateX(0); /* Termina en su posición original */
 	  opacity: 1;
 	}
   }
-  
-  .zoom-in {
-	animation: zoomIn 0.7s ease-out;
+  .slide {
+	animation: slideInRight 0.7s ease-out;
   }

@@ -18,10 +18,8 @@ import { QueryDocumentSnapshot, DocumentData } from '@angular/fire/firestore';
   selector: 'app-generar-excel',
   standalone: true,
   imports: [
-	RouterOutlet,
-    RouterLink,
+	
     BtnDirective,
-	SpinnerComponent
   ],
   templateUrl: './generar-excel.component.html',
   styleUrl: './generar-excel.component.css'

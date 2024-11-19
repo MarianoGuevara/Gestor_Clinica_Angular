@@ -1,5 +1,5 @@
 import { Component, Inject, inject, ViewChild } from '@angular/core';
-import { IEspecialista, IPaciente, IUsuario } from '../../interfaces/interfaces';
+import { IEspecialista, IPaciente, ITurno, IUsuario } from '../../interfaces/interfaces';
 import { EspecialistasService } from '../../servicios/especialistas.service';
 import { PacientesService } from '../../servicios/pacientes.service';
 import { Subscription } from 'rxjs';
@@ -10,6 +10,8 @@ import { AuthService } from '../../servicios/auth.service';
 import { AlertService } from '../../servicios/alert.service';
 import { Router, RouterLink } from '@angular/router';
 import { GenerarExcelComponent } from "../generar-excel/generar-excel.component";
+import jsPDF from 'jspdf';
+import { TurnosService } from '../../servicios/turnos.service';
 
 @Component({
   selector: 'app-seccion-usuarios-admin',
@@ -34,6 +36,7 @@ export class SeccionUsuariosAdminComponent {
     loading = inject(LoadingService);
     auth = inject(AuthService);
     alert = inject(AlertService);
+	turnosService = inject(TurnosService);
 	@ViewChild(GenerarExcelComponent) excelComponente!: GenerarExcelComponent;
 
     ngOnInit(): void {
@@ -152,6 +155,49 @@ export class SeccionUsuariosAdminComponent {
 	async excel() {
 		this.loading.mostrarSpinner();
 		await this.excelComponente.exportToExcel();
+		this.loading.ocultarSpinner();
+	}
+
+	async pdfUsuariosTurnos(id:string, apellido:string) {
+		this.loading.mostrarSpinner();
+
+		const doc = new jsPDF();
+		const logoData = 'assets/logo.png';
+	  
+		doc.addImage(logoData, 'PNG', 70, 10, 50, 50);
+		doc.setFontSize(16);
+		doc.text('Turnos', 76, 70);
+		doc.setFontSize(12);
+		doc.text(`Paciente: ${apellido}`, 10, 80);
+		
+		let yOffset = 110;
+	  
+
+		const turnosDb = await this.turnosService.GetTurnosPaciente(id);
+		for (let i = 0; i < turnosDb.docs.length; i++) {
+			const turnoActual = turnosDb.docs[i].data() as ITurno;
+
+			doc.setFontSize(12);
+			doc.text(`Fecha: ${turnoActual.fecha}, ${turnoActual.horario} hs`, 10, yOffset);
+			yOffset += 10;
+			doc.text(`Especialista: ${turnoActual.especialistaNombreApellido}`, 10, yOffset);
+			yOffset += 10;
+			doc.text(`Especialidad: ${turnoActual.especialidad}`, 10, yOffset);
+			yOffset += 10;
+			doc.text(`Estado del turno: ${turnoActual.estado}`, 10, yOffset);
+			yOffset += 10;
+			doc.text('____________________', 10, yOffset);
+			yOffset += 10;
+
+			if (yOffset > 280) {
+			doc.addPage();
+			yOffset = 20; // Reiniciar el yOffset en la nueva página
+			}
+		}
+
+		const fileName = `Turnos_${apellido}_${new Date().toISOString()}.pdf`;
+		doc.save(fileName);
+	  
 		this.loading.ocultarSpinner();
 	}
 }
