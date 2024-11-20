@@ -135,8 +135,8 @@
 						<li class="opt"><a class="dropdown-item" (click)="turnosPorMedico('especialista', especialistas[$index], false)">{{especialistas[$index].apellido}}</a></li>
 					}
 				</ul>
-				@if (this.especialistaTurnosSolicitadoMedico != null) {
-					<span style="margin-left: 5px;">{{this.especialistaTurnosSolicitadoMedico.apellido}}</span>
+				@if (this.especialistaTurnosFinalizadoMedico != null) {
+					<span style="margin-left: 5px;">{{this.especialistaTurnosFinalizadoMedico.apellido}}</span>
 				}
 			</div>
 			<input 

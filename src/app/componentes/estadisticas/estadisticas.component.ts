@@ -44,6 +44,7 @@ export class EstadisticasComponent {
 	dateTurnosSolicitadoMedico: string = "";
 	dateTurnosFinalizadoMedico: string = "";
 	especialistaTurnosSolicitadoMedico: IEspecialista|null = null;
+	especialistaTurnosFinalizadoMedico: IEspecialista|null = null;
 	labelsTurnosSolicitadoMedico: any = []
 	seriesTurnosSolicitadoMedico: any = []
 	labelsTurnosFinalizadoMedico: any = []
@@ -162,32 +163,45 @@ export class EstadisticasComponent {
 
 	async turnosPorMedico(tipoClick:string, especialista:IEspecialista|null=null, solicitado:boolean=true) {
 		this.loading.mostrarSpinner();
-		if (tipoClick == "especialista") {
+		if (tipoClick == "especialista" && solicitado) {
 			this.especialistaTurnosSolicitadoMedico = especialista;
-		} 
+		} else if (tipoClick == "especialista" && !solicitado){
+			this.especialistaTurnosFinalizadoMedico = especialista;
+		}
 
 		const condicion = solicitado && this.dateTurnosSolicitadoMedico != "";
 		const condicion2 = !solicitado && this.dateTurnosFinalizadoMedico != "";
 
-		if (this.especialistaTurnosSolicitadoMedico != null && (condicion || condicion2)) {
+		const condicionSolicitado = (
+			this.especialistaTurnosSolicitadoMedico != null && this.dateTurnosSolicitadoMedico != ""
+		);
 
-			const arrayFechasHastaHoy = this.generarDiasDesdeFecha(this.dateTurnosSolicitadoMedico);
-			let arrayCantTurnosSoliMedico = []
-			for (let i=0; i<arrayFechasHastaHoy.length; i++) {
-				arrayCantTurnosSoliMedico.push(0);
+		const condicionSolicitadoNot = (
+			this.especialistaTurnosFinalizadoMedico != null && this.dateTurnosFinalizadoMedico != ""
+		);
+
+		if ((solicitado && condicionSolicitado) || (!solicitado && condicionSolicitadoNot)) {
+			console.log("entre")
+			let arrayFechasHastaHoy:any = []
+			if (solicitado) {
+				arrayFechasHastaHoy = this.generarDiasDesdeFecha(this.dateTurnosSolicitadoMedico);
+				
+			} else {
+				arrayFechasHastaHoy = this.generarDiasDesdeFecha(this.dateTurnosFinalizadoMedico);
 			}
+			let arrayCantTurnosSoliMedico = []
+				for (let i=0; i<arrayFechasHastaHoy.length; i++) {
+					arrayCantTurnosSoliMedico.push(0);
+				}
 			
 
 			for (let i=0; i<arrayFechasHastaHoy.length; i++) {
-				console.log(this.especialistaTurnosSolicitadoMedico.id);
-				console.log(arrayFechasHastaHoy[i]);
-				console.log("--------------------------------------");
-
+	
 				let turnosDb:any = []
-				if (solicitado) {
+				if (solicitado && this.especialistaTurnosSolicitadoMedico != null) {
 					turnosDb = await this.turnosService.GetTurnosSolicitadosEspecialistaFecha(this.especialistaTurnosSolicitadoMedico.id, arrayFechasHastaHoy[i]);
-				} else {
-					turnosDb = await this.turnosService.GetTurnosFinalizadosEspecialistaFecha(this.especialistaTurnosSolicitadoMedico.id, arrayFechasHastaHoy[i]);
+				} else if (!solicitado && this.especialistaTurnosFinalizadoMedico != null){
+					turnosDb = await this.turnosService.GetTurnosFinalizadosEspecialistaFecha(this.especialistaTurnosFinalizadoMedico.id, arrayFechasHastaHoy[i]);
 				}
 
 				console.log(turnosDb.docs);
@@ -211,11 +225,13 @@ export class EstadisticasComponent {
 			console.log(this.labelsTurnosSolicitadoMedico);
 			console.log(this.seriesTurnosSolicitadoMedico);
 		}
-		
-		
-
+	
 		this.loading.ocultarSpinner();
 	}
+
+
+	
+
 
 
 	generarDiasDesdeFecha(fechaInicial: string): string[] {
