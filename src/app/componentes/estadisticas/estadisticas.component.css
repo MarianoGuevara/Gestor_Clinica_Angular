@@ -24,3 +24,7 @@
     width: 100%;
     height: 200px; /* Ajusta el tamaño de la gráfica */
 }
+
+.opt:hover {
+	cursor: pointer;
+}

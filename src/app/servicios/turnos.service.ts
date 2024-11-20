@@ -59,6 +59,30 @@ export class TurnosService {
         return especialistaDocs;
     }
 
+	async GetTurnosSolicitadosEspecialistaFecha(idEspecialista:string, fecha:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'turnos'),
+		    where('especialistaId', '==', idEspecialista), 
+			where('estado', '==', 'Pendiente de aprobacion'), 
+			where('fecha', '==', fecha), 
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
+	async GetTurnosFinalizadosEspecialistaFecha(idEspecialista:string, fecha:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'turnos'),
+		    where('especialistaId', '==', idEspecialista), 
+			where('estado', '==', 'Finalizado'), 
+			where('fecha', '==', fecha), 
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
+
     async GetTurnosEspecialistaId(idEspecialista:string)
     {
         const turnoQuery = query(
@@ -80,6 +104,15 @@ export class TurnosService {
         return especialistaDocs;
     }
 
+	async GetTurnosDia(fecha:string)
+    {
+        const turnoQuery = query(
+			collection(this.firestore, 'turnos'),
+			where('fecha', '==', fecha)
+		);
+        const especialistaDocs = await getDocs(turnoQuery);
+        return especialistaDocs;
+    }
 
 	async actualizarTurno(turno:ITurno)
     {

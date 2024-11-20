@@ -11,7 +11,7 @@ import { IEspecialista, ILog, ITurno } from '../../interfaces/interfaces';
 import { FechaPipe } from '../../pipes/fecha.pipe';
 import { TurnosService } from '../../servicios/turnos.service';
 import { EspecialistasService } from '../../servicios/especialistas.service';
-
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-estadisticas',
@@ -19,7 +19,8 @@ import { EspecialistasService } from '../../servicios/especialistas.service';
   imports: [
 	GraficoGenericoComponent,
 	BtnDirective,
-	FechaPipe
+	FechaPipe,
+	FormsModule 
   ],
   templateUrl: './estadisticas.component.html',
   styleUrl: './estadisticas.component.css'
@@ -36,7 +37,17 @@ export class EstadisticasComponent {
 	especialistasService = inject(EspecialistasService);
 	labelsEspecialidad: any = []
 	seriesEspecialidad: any = []
-
+	dateTurnosPorDia: string = "";
+	labelsTurnosDia: any = []
+	seriesTurnosDia: any = []
+	especialistas: IEspecialista[] = []
+	dateTurnosSolicitadoMedico: string = "";
+	dateTurnosFinalizadoMedico: string = "";
+	especialistaTurnosSolicitadoMedico: IEspecialista|null = null;
+	labelsTurnosSolicitadoMedico: any = []
+	seriesTurnosSolicitadoMedico: any = []
+	labelsTurnosFinalizadoMedico: any = []
+	seriesTurnosFinalizadoMedico: any = []
 
 	constructor() {}
 
@@ -45,11 +56,21 @@ export class EstadisticasComponent {
 
 		await this.generarEstadisticaLogs();
 		await this.generarTurnosPorEspecialidad();
+		await this.traerEspecialistas();
+
 
 		this.loading.ocultarSpinner();
 	}
 
-	generarPDF(graficoId:string) {
+	async traerEspecialistas() {
+		const especialistasDb = await this.especialistasService.GetEspecialistasNormal();
+		for (let i=0; i<especialistasDb.docs.length; i++) {
+			const especialistaActual = especialistasDb.docs[i].data() as IEspecialista
+			this.especialistas.push(especialistaActual);
+		}
+	}
+
+	generarPDF(graficoId:string, nombre:string) {
 		const elemento = document.getElementById(graficoId) as HTMLElement;
 
 		html2canvas(elemento, { scale: 2 }).then((canvas) => {
@@ -61,7 +82,7 @@ export class EstadisticasComponent {
 			
 			pdf.addImage(imgData, 'PNG', 10, 10, pdfWidth - 20, pdfHeight - 20);
 			
-			pdf.save(this.auth.usuarioRealActual?.apellido+'-grafico.pdf');
+			pdf.save(this.auth.usuarioRealActual?.apellido+"-"+nombre+'-grafico.pdf');
 		}); 	
 		
 	}
@@ -110,5 +131,128 @@ export class EstadisticasComponent {
 
 		this.labelsEspecialidad = especialidadesSet;
 		this.seriesEspecialidad = [{name:'', data:especialidadesCant}]
+	}
+
+	
+	async turnosPorDia() {
+		this.loading.mostrarSpinner();
+
+		const arrayFechasHastaHoy = this.generarDiasDesdeFecha(this.dateTurnosPorDia);
+		let arrayCantTurnosDia = []
+		for (let i=0; i<arrayFechasHastaHoy.length; i++) {
+			arrayCantTurnosDia.push(0);
+		}
+
+		for (let i=0; i<arrayFechasHastaHoy.length; i++) {
+			const turnosDb = await this.turnosService.GetTurnosDia(arrayFechasHastaHoy[i])
+			arrayCantTurnosDia[i] = turnosDb.docs.length;
+		}
+
+		for (let i=0; i<arrayFechasHastaHoy.length; i++) {	
+			arrayFechasHastaHoy[i] = arrayFechasHastaHoy[i].split(' (')[0];
+		}
+
+		this.labelsTurnosDia = arrayFechasHastaHoy
+		this.seriesTurnosDia = [{name:'', data:arrayCantTurnosDia}]
+		console.log(this.labelsTurnosDia);
+		console.log(this.seriesEspecialidad);
+
+		this.loading.ocultarSpinner();
+	}
+
+	async turnosPorMedico(tipoClick:string, especialista:IEspecialista|null=null, solicitado:boolean=true) {
+		this.loading.mostrarSpinner();
+		if (tipoClick == "especialista") {
+			this.especialistaTurnosSolicitadoMedico = especialista;
+		} 
+
+		const condicion = solicitado && this.dateTurnosSolicitadoMedico != "";
+		const condicion2 = !solicitado && this.dateTurnosFinalizadoMedico != "";
+
+		if (this.especialistaTurnosSolicitadoMedico != null && (condicion || condicion2)) {
+
+			const arrayFechasHastaHoy = this.generarDiasDesdeFecha(this.dateTurnosSolicitadoMedico);
+			let arrayCantTurnosSoliMedico = []
+			for (let i=0; i<arrayFechasHastaHoy.length; i++) {
+				arrayCantTurnosSoliMedico.push(0);
+			}
+			
+
+			for (let i=0; i<arrayFechasHastaHoy.length; i++) {
+				console.log(this.especialistaTurnosSolicitadoMedico.id);
+				console.log(arrayFechasHastaHoy[i]);
+				console.log("--------------------------------------");
+
+				let turnosDb:any = []
+				if (solicitado) {
+					turnosDb = await this.turnosService.GetTurnosSolicitadosEspecialistaFecha(this.especialistaTurnosSolicitadoMedico.id, arrayFechasHastaHoy[i]);
+				} else {
+					turnosDb = await this.turnosService.GetTurnosFinalizadosEspecialistaFecha(this.especialistaTurnosSolicitadoMedico.id, arrayFechasHastaHoy[i]);
+				}
+
+				console.log(turnosDb.docs);
+				arrayCantTurnosSoliMedico[i] = turnosDb.docs.length;
+			}
+
+
+			for (let i=0; i<arrayFechasHastaHoy.length; i++) {	
+				arrayFechasHastaHoy[i] = arrayFechasHastaHoy[i].split(' (')[0];
+			}
+
+
+			if (solicitado) {
+				this.labelsTurnosSolicitadoMedico = arrayFechasHastaHoy;
+				this.seriesTurnosSolicitadoMedico = arrayCantTurnosSoliMedico;
+			} else {
+				this.labelsTurnosFinalizadoMedico = arrayFechasHastaHoy;
+				this.seriesTurnosFinalizadoMedico = arrayCantTurnosSoliMedico;
+			}
+	
+			console.log(this.labelsTurnosSolicitadoMedico);
+			console.log(this.seriesTurnosSolicitadoMedico);
+		}
+		
+		
+
+		this.loading.ocultarSpinner();
+	}
+
+
+	generarDiasDesdeFecha(fechaInicial: string): string[] {
+		const [anio, mes, dia] = fechaInicial.split('-').map(Number); // Desglosa "YYYY-MM-DD"
+		const fechaInicio = new Date(anio, mes - 1, dia); // Crea la fecha local correctamente
+		const fechaHoy = new Date();
+	
+		// Normalizar ambas fechas a medianoche (eliminar horas, minutos y segundos)
+		fechaInicio.setHours(0, 0, 0, 0);
+		fechaHoy.setHours(0, 0, 0, 0);
+	
+		const diasArray: string[] = [];
+	
+		// Bucle para incluir todos los días desde fechaInicio hasta fechaHoy
+		while (fechaInicio <= fechaHoy) {
+			// Formatear la fecha en "YYYY-MM-DD"
+			const dia = fechaInicio.getDate().toString().padStart(2, '0');
+			const mes = (fechaInicio.getMonth() + 1).toString().padStart(2, '0'); // Meses comienzan desde 0
+			const anio = fechaInicio.getFullYear();
+			const final = this.agregarDiaSemana(`${anio}-${mes}-${dia}`);
+			diasArray.push(final);
+	
+			// Incrementar un día
+			fechaInicio.setDate(fechaInicio.getDate() + 1);
+		}
+	
+		return diasArray;
+	}
+	
+	
+	agregarDiaSemana(fecha: string): string {
+		const diasSemana = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
+		const [year, month, day] = fecha.split("-").map(Number);
+	
+		const fechaObj = new Date(year, month - 1, day); // Crear objeto Date
+		const diaSemana = diasSemana[fechaObj.getDay()]; // Obtener el día de la semana
+	
+		return `${fecha} (${diaSemana})`; // Formato esperado en Firebase
 	}
 }

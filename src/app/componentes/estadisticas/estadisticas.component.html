@@ -26,7 +26,7 @@
 			  
 		</div>
 		<div class="d-flex justify-content-center mt-3">
-			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('tablaLogs')">Generar PDF</button>
+			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('tablaLogs', 'tablaLogs')">Generar PDF</button>
 		</div>
 	</div>
 
@@ -42,100 +42,131 @@
 				</app-grafico-generico>
 			</div>
 			<div class="d-flex justify-content-center mt-3">
-				<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf2')">Generar PDF</button>
+				<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf2', 'turnosEspecialidad')">Generar PDF</button>
 			</div>
 		</div>
 	}
 	
 	
 	<div class="card d-flex flex-wrap cardCompleta">
+		<input class="form-control w-auto mb-3"  type="date" [(ngModel)]="dateTurnosPorDia" (change)="turnosPorDia()">
 		<div class="d-flex justify-content-center mt-3">
-			<app-grafico-generico id="graf1" tipoGrafico="pie"
-			[labels]="['k','l','m','n','o']"
-			[series]="[15,25,35,45,55]"
-			tituloGrafico="Gráfico 3"
-			[anchoGrafico]="'250px'"
-			[anchoContenedorGrafico]="'350px'">
-			</app-grafico-generico>
-		</div>
-		<div class="d-flex justify-content-center mt-3">
-			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf1')">Generar PDF</button>
-		</div>
-	</div>
-
-
-	<div class="card d-flex flex-wrap cardCompleta">
-		<div class="d-flex justify-content-center mt-3">
+			
 			<app-grafico-generico id="graf3" tipoGrafico="lineas"
-			[labels]="['k','l','m','n','o']"
-			[series]="[{name:'', data:[1,2,3,4,5]}]"
-			tituloGrafico="Gráfico 3"
-			[anchoGrafico]="'250px'"
+			[labels]="this.labelsTurnosDia"
+			[series]="this.seriesTurnosDia"
+			tituloGrafico="Cantidad de turnos por dia"
+			[anchoGrafico]="'300px'"
 			[anchoContenedorGrafico]="'350px'">
 			</app-grafico-generico>
 		</div>
 		<div class="d-flex justify-content-center mt-3">
-			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf3')">Generar PDF</button>
+			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf3', 'turnosPorDia')">Generar PDF</button>
 		</div>
 	</div>
 
-	<div class="card d-flex flex-wrap cardCompleta">
-		<div class="d-flex justify-content-center mt-3">
-			<app-grafico-generico id="graf2" tipoGrafico="pie"
-			[labels]="['k','l','m','n','o']"
-			[series]="[15,25,35,45,55]"
-			tituloGrafico="Gráfico 3"
-			[anchoGrafico]="'250px'"
-			[anchoContenedorGrafico]="'350px'">
-			</app-grafico-generico>
+	
+	<div class="card cardCompleta p-3">
+		<div class="d-flex flex-column align-items-center">
+			<div class="dropdown mb-3">
+				<button
+				appBtn
+				class="btn btn-primary"
+				type="button"
+				id="dropdownMenuButton"
+				data-bs-toggle="dropdown"
+				aria-expanded="false">
+				Selecciona especialista
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					@for (especialista of especialistas; track $index) {
+						<li class="opt"><a class="dropdown-item" (click)="turnosPorMedico('especialista', especialistas[$index])">{{especialistas[$index].apellido}}</a></li>
+					}
+				</ul>
+				@if (this.especialistaTurnosSolicitadoMedico != null) {
+					<span style="margin-left: 5px;">{{this.especialistaTurnosSolicitadoMedico.apellido}}</span>
+				}
+			</div>
+			<input 
+			type="date" 
+			class="form-control w-auto mb-3" 
+			[(ngModel)]="dateTurnosSolicitadoMedico" 
+			(change)="turnosPorMedico('fecha')">
 		</div>
 		<div class="d-flex justify-content-center mt-3">
-			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf2')">Generar PDF</button>
+			@if (labelsTurnosSolicitadoMedico != []) {
+				<app-grafico-generico 
+					id="graf4" 
+					tipoGrafico="pie"
+					[labels]="labelsTurnosSolicitadoMedico"
+					[series]="seriesTurnosSolicitadoMedico"
+					tituloGrafico="Cantidad de turnos 'solicitados' de un especialista"
+					[anchoGrafico]="'250px'"
+					[anchoContenedorGrafico]="'350px'">
+				</app-grafico-generico>
+			}
+		</div>
+		<div class="d-flex justify-content-center mt-3">
+			<button 
+				style="margin: 10px;" 
+				class="btn btn-success" 
+				appBtn 
+				(click)="generarPDF('graf4', 'turnosSolicitadosMedico')">
+				Generar PDF
+			</button>
 		</div>
 	</div>
 
-	<div class="card d-flex flex-wrap cardCompleta">
-		<div class="d-flex justify-content-center mt-3">
-			<app-grafico-generico id="graf2" tipoGrafico="pie"
-			[labels]="['k','l','m','n','o']"
-			[series]="[15,25,35,45,55]"
-			tituloGrafico="Gráfico 3"
-			[anchoGrafico]="'250px'"
-			[anchoContenedorGrafico]="'350px'">
-			</app-grafico-generico>
+
+	<div class="card cardCompleta p-3">
+		<div class="d-flex flex-column align-items-center">
+			<div class="dropdown mb-3">
+				<button
+				appBtn
+				class="btn btn-primary"
+				type="button"
+				id="dropdownMenuButton"
+				data-bs-toggle="dropdown"
+				aria-expanded="false">
+				Selecciona especialista
+				</button>
+				<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+					@for (especialista of especialistas; track $index) {
+						<li class="opt"><a class="dropdown-item" (click)="turnosPorMedico('especialista', especialistas[$index], false)">{{especialistas[$index].apellido}}</a></li>
+					}
+				</ul>
+				@if (this.especialistaTurnosSolicitadoMedico != null) {
+					<span style="margin-left: 5px;">{{this.especialistaTurnosSolicitadoMedico.apellido}}</span>
+				}
+			</div>
+			<input 
+			type="date" 
+			class="form-control w-auto mb-3" 
+			[(ngModel)]="dateTurnosFinalizadoMedico" 
+			(change)="turnosPorMedico('fecha', null, false)">
 		</div>
 		<div class="d-flex justify-content-center mt-3">
-			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf2')">Generar PDF</button>
+			@if (labelsTurnosFinalizadoMedico != []) {
+				<app-grafico-generico 
+					id="graf5" 
+					tipoGrafico="pie"
+					[labels]="labelsTurnosFinalizadoMedico"
+					[series]="seriesTurnosFinalizadoMedico"
+					tituloGrafico="Cantidad de turnos 'finalizados' de un especialista"
+					[anchoGrafico]="'250px'"
+					[anchoContenedorGrafico]="'350px'">
+				</app-grafico-generico>
+			}
+		</div>
+		<div class="d-flex justify-content-center mt-3">
+			<button 
+				style="margin: 10px;" 
+				class="btn btn-success" 
+				appBtn 
+				(click)="generarPDF('graf5', 'turnosSolicitadosMedico')">
+				Generar PDF
+			</button>
 		</div>
 	</div>
 
-	<div class="card d-flex flex-wrap cardCompleta">
-		<div class="d-flex justify-content-center mt-3">
-			<app-grafico-generico id="graf2" tipoGrafico="pie"
-			[labels]="['k','l','m','n','o']"
-			[series]="[15,25,35,45,55]"
-			tituloGrafico="Gráfico 3"
-			[anchoGrafico]="'250px'"
-			[anchoContenedorGrafico]="'350px'">
-			</app-grafico-generico>
-		</div>
-		<div class="d-flex justify-content-center mt-3">
-			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf2')">Generar PDF</button>
-		</div>
-	</div>
-
-	<div class="card d-flex flex-wrap cardCompleta">
-		<div class="d-flex justify-content-center mt-3">
-			<app-grafico-generico id="graf2" tipoGrafico="pie"
-			[labels]="['k','l','m','n','o']"
-			[series]="[15,25,35,45,55]"
-			tituloGrafico="Gráfico 3"
-			[anchoGrafico]="'250px'"
-			[anchoContenedorGrafico]="'350px'">
-			</app-grafico-generico>
-		</div>
-		<div class="d-flex justify-content-center mt-3">
-			<button style="margin: 10px;" class="btn" appBtn (click)="generarPDF('graf2')">Generar PDF</button>
-		</div>
-	</div>
-</div>	
+</div>
