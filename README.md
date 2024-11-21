@@ -16,7 +16,7 @@ En este login podras iniciar sesión con credenciales propias o con las hardcode
 En este registro podras dar de alta usuarios del tipo especialista o paciente con captcha y validaciones incluidas
 
 ### Página sobre mi
-![imagenLocal](src/assets/readme/sobre-mi.jpg)
+![imagenLocal](src/assets/readme/perfil.jpeg)
 En este página encontrarás toda la información detallada sobre el usuario con la sesión actual, así como una historia clinia para pacientes y seleccion de horarios para especialistas
 
 ### Página turnos alta
@@ -31,5 +31,17 @@ En este página podra el paciente podrá ver sus turnos, el estado del mismo, y 
 ![imagenLocal](src/assets/readme/admin-usuarios.jpg)
 En esta página exclusiva para administradores, estos podrán permitir los intentos de registro de nuevos usuarios especialistas así como registrar cualquier tipo de usuario nuevo.
 
+### Página historia clinica
+![imagenLocal](src/assets/readme/historia.jpeg)
+![imagenLocal](src/assets/readme/historia2.jpeg)
+En esta página podran ver las historias clinicas suyas los pacientes y especialistas ademas de poder filtrar con características exclusivas 
 
-#### Creada por: Mariano Guevara
+### Página estadísticas
+![imagenLocal](src/assets/readme/estadistica1.jpeg)
+![imagenLocal](src/assets/readme/estadistica2.jpeg)
+En esta página 
+
+
+##### ¡¡En varias secciones se pueden descargar excels y PDF sobre las diferentes funcionalidades con características sorprendentes!!
+
+### Creada por: Mariano Guevara
